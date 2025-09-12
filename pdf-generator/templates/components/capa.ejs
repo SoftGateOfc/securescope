@@ -1,0 +1,49 @@
+<!-- CAPA DO RELATÓRIO -->
+<div class="min-h-screen flex flex-col justify-center items-center">
+    <!-- Logo da Empresa -->
+    <% if (imagens && imagens.logo_empresa) { %>
+    <div class="mb-8">
+        <img src="<%= imagens.logo_empresa %>" alt="Logo" class="h-20 w-auto" />
+    </div>
+    <% } %>
+
+    <!-- Título -->
+    <div class="text-center space-y-6">
+        <h1 class="text-4xl font-bold text-gray-900">Relatório de Análise</h1>
+
+        <h2 class="text-2xl text-blue-600 font-semibold">
+            <%= dados && dados.nome_cliente ? dados.nome_cliente : 'Cliente' %>
+        </h2>
+
+        <!-- Informações básicas -->
+        <div class="bg-gray-100 p-6 rounded-lg max-w-md">
+            <p>
+                <strong>Local:</strong> <%= dados && dados.localizacao_analise ?
+                dados.localizacao_analise : 'Não informado' %>
+            </p>
+            <p>
+                <strong>Data:</strong> <%= dataGeracao ? dataGeracao : 'Hoje' %>
+            </p>
+        </div>
+    </div>
+
+    <!-- Logo do Cliente -->
+    <% if (imagens && imagens.logo_cliente) { %>
+    <div class="mt-8">
+        <img
+            src="<%= imagens.logo_cliente %>"
+            alt="Logo Cliente"
+            class="h-16 w-auto"
+        />
+    </div>
+    <% } %>
+
+    <!-- Rodapé da Capa -->
+    <div class="absolute bottom-8 left-0 right-0 text-center">
+        <p class="text-sm text-gray-600">Documento Confidencial</p>
+        <p class="text-xs text-gray-500">
+            Gerado em <%= dataGeracao ? dataGeracao : new
+            Date().toLocaleDateString('pt-BR') %>
+        </p>
+    </div>
+</div>
