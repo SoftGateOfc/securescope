@@ -4,139 +4,156 @@
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Relatório - <%= dados?.nome_empresa || 'Empresa' %></title>
-
-        <!-- Tailwind CSS via CDN -->
         <script src="https://cdn.tailwindcss.com"></script>
 
-        <!-- Estilos para PDF -->
         <style>
             @page {
-                margin: 2cm;
                 size: A4;
+                margin: 0;
             }
-
             body {
                 font-family: Arial, sans-serif;
-                line-height: 1.6;
             }
-
             .page-break {
                 page-break-before: always;
+                page-break-inside: auto;
+                position: relative;
+                overflow: visible;
+                height: auto;
+                min-height: 100vh;
+                width: 100%;
+            }
+
+            /* Primeira página não força quebra */
+            .page-break:first-child {
+                page-break-before: auto;
+            }
+
+            /* Para conteúdo longo como listas */
+            .section-break-inside {
+                page-break-inside: auto;
+                break-inside: auto;
+            }
+
+            /* Itens de lista que podem quebrar entre eles, mas não no meio */
+            .breakable-list li {
+                page-break-inside: avoid;
+                break-inside: avoid;
+            }
+
+            /* Garante que cada página seja independente */
+            .page-break {
+                page-break-before: always;
+                page-break-inside: avoid;
+                position: relative;
+                overflow: hidden;
+                height: 100vh;
+                width: 100%;
+            }
+
+            /* Container para elementos decorativos */
+            .decorative-container {
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                overflow: hidden;
+                z-index: 0;
+                pointer-events: none;
+            }
+
+            /* Força contenção de elementos absolutos */
+            .page-break > * {
+                position: relative;
+                z-index: 1;
+            }
+
+            /* Garante que imagens sejam renderizadas corretamente */
+            img {
+                max-width: 100%;
+                height: auto;
+                display: block;
+            }
+
+            /* Previne quebra de elementos importantes */
+            .no-break {
+                page-break-inside: avoid;
+                break-inside: avoid;
+            }
+
+            /* Estilos para Puppeteer específicos */
+            @media print {
+                .page-break {
+                    page-break-before: always;
+                    height: auto;
+                    overflow: visible;
+                }
+
+                /* Força renderização de backgrounds em PDF */
+                * {
+                    -webkit-print-color-adjust: exact;
+                    print-color-adjust: exact;
+                }
+
+                /* Garante que gradientes sejam renderizados */
+                .bg-gradient-to-r {
+                    -webkit-print-color-adjust: exact;
+                    print-color-adjust: exact;
+                }
+            }
+
+            /* Corrigir posicionamento de elementos absolutos no PDF */
+            .min-h-screen {
+                position: relative;
+                overflow: hidden;
+            }
+
+            /* Garante que elementos absolutos não vazem para outras páginas */
+            .relative {
+                position: relative;
+                z-index: 1;
+            }
+            /* Garante que bordas sejam renderizadas */
+
+            .imagem-cidade-forca {
+                background-image: url("<%= imagens.cidade %>") !important;
+                background-size: 100% 100% !important;
+                background-position: center !important;
+                background-repeat: no-repeat !important;
+                width: 100% !important;
+                height: 300px !important;
+                display: block !important;
+                overflow: visible !important;
             }
         </style>
     </head>
-
     <body class="bg-white text-gray-900">
-        <!-- PÁGINA 1: CAPA -->
+        <!-- PÁGINA 1 - CAPA -->
         <%- include('components/capa') %>
 
-        <!-- PÁGINA 2: RESUMO -->
-        <div class="page-break p-8">
-            <h1
-                class="text-3xl font-bold mb-8 text-blue-600 border-b-2 border-blue-600 pb-4"
-            >
-                Resumo Executivo
-            </h1>
+        <!-- PÁGINA 2 - SUMÁRIO -->
+        <%- include('components/sumario') %>
 
-            <!-- Objetivo -->
-            <div class="mb-8">
-                <h2 class="text-xl font-semibold mb-4">🎯 Objetivo</h2>
-                <div class="bg-blue-50 p-4 rounded-lg">
-                    <p><%= dados?.objetivo || 'Objetivo não informado' %></p>
-                </div>
-            </div>
+        <!-- PÁGINA 3 - OBJETIVO -->
+        <%- include('components/objetivo') %>
 
-            <!-- Estatísticas -->
-            <div class="mb-8">
-                <h2 class="text-xl font-semibold mb-4">📊 Estatísticas</h2>
+        <!-- PÁGINA 4 - METODOLOGIA -->
+        <%- include('components/metodologia') %>
 
-                <div class="grid grid-cols-2 gap-4">
-                    <div
-                        class="bg-blue-500 text-white p-4 rounded-lg text-center"
-                    >
-                        <p class="text-2xl font-bold">
-                            <%= dados_modelo?.total_perguntas_respondidas || 0
-                            %>
-                        </p>
-                        <p class="text-sm">Total de Itens</p>
-                    </div>
+        <!-- PÁGINA 5 - PANORAMA SITUACIONAL -->
+        <%- include('components/panorama') %>
 
-                    <div
-                        class="bg-green-500 text-white p-4 rounded-lg text-center"
-                    >
-                        <p class="text-2xl font-bold">
-                            <%= dados_modelo?.total_pilares ?
-                            Object.keys(dados_modelo.total_pilares).length : 0
-                            %>
-                        </p>
-                        <p class="text-sm">Pilares Analisados</p>
-                    </div>
-                </div>
-            </div>
+        <!-- PÁGINA 6 - RESUMO EXECUTIVO -->
+        <%- include('components/resumoExecutivo') %>
 
-            <!-- Observações -->
-            <div class="mb-8">
-                <h2 class="text-xl font-semibold mb-4">📝 Observações</h2>
-                <div
-                    class="bg-yellow-50 p-4 rounded-lg border-l-4 border-yellow-500"
-                >
-                    <p>
-                        <%= dados?.observacoes || 'Nenhuma observação informada'
-                        %>
-                    </p>
-                </div>
-            </div>
-        </div>
+        <!-- PÁGINA 7 - ANÁLISE DETALHADA -->
+        <%- include('components/resumoExecutivo1') %>
 
-        <!-- PÁGINA 3: PILARES (se tiver dados) -->
-        <% if (dados_modelo?.total_pilares) { %>
-        <div class="page-break p-8">
-            <h1
-                class="text-3xl font-bold mb-8 text-blue-600 border-b-2 border-blue-600 pb-4"
-            >
-                Análise por Pilares
-            </h1>
+        <!-- PÁGINA 8 - ANÁLISE DE NÃO CONFORMIDADES-->
+        <%- include('components/naoConformidades') %>
 
-            <div class="space-y-6">
-                <% Object.entries(dados_modelo.total_pilares).forEach(([pilar,
-                total]) => { %>
-                <div
-                    class="bg-white border border-gray-200 rounded-lg p-6 shadow-sm"
-                >
-                    <div class="flex justify-between items-center mb-4">
-                        <h3 class="text-lg font-semibold"><%= pilar %></h3>
-                        <span class="text-2xl font-bold text-blue-600"
-                            ><%= total %></span
-                        >
-                    </div>
-
-                    <!-- Barra de progresso -->
-                    <div class="w-full bg-gray-200 rounded-full h-4">
-                        <% const porcentagem =
-                        dados_modelo?.porcentagem_pilar?.[pilar] || 0; %>
-                        <div
-                            class="bg-blue-500 h-4 rounded-full"
-                            style="width: <%= porcentagem %>%"
-                        ></div>
-                    </div>
-                    <p class="text-sm text-gray-600 mt-2">
-                        <%= porcentagem %>% do total
-                    </p>
-                </div>
-                <% }); %>
-            </div>
-        </div>
-        <% } %>
-
-        <!-- RODAPÉ -->
-        <div class="text-center mt-16 pt-8 border-t border-gray-300">
-            <p class="text-sm text-gray-600">
-                Relatório gerado por
-                <strong><%= dados?.nome_empresa || 'Sistema' %></strong>
-            </p>
-            <p class="text-xs text-gray-500">
-                <%= dataGeracao || new Date().toLocaleDateString('pt-BR') %>
-            </p>
-        </div>
+        <!-- PÁGINA 9 - ANÁLISE DE RECOMENDAÇÕES-->
+        <%- include('components/recomendacoes') %>
     </body>
 </html>

@@ -13,6 +13,11 @@ use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
+
+//Belchior
+use Illuminate\Support\Facades\Http;
+use Exception;
+
 class FormularioController extends Controller
 {
     use AuthorizesRequests;    
@@ -281,58 +286,139 @@ class FormularioController extends Controller
     }
 
     public function relatorio_personalizado(Request $request){        
-        $request->validate([
-            'relatorio_formulario_id' => 'required',
-            'nome_empresa' => 'required|max:255',
-            'nome_cliente' => 'required|max:255',
-            'objetivo' => 'required|max:500',
-            'observacoes' => 'required|max:500',
-            'localizacao_analise' => 'required|max:255',
-            'referencias_proximas' => 'required|max:255',
-            'panorama' => 'required|max:255',
-            'logo_empresa' => 'required|file',
-            'logo_cliente' => 'required|file',
-        ], 
-        [
-            'required' => 'O campo :attribute é obrigatório.',
-            'max' => 'O campo :attribute deve ter no máximo :max caracteres.',
-            'logo_empresa.file' => 'Você precisa enviar o arquivo da logo da empresa.',
-            'logo_cliente.file' => 'Você precisa enviar o arquivo da logo do cliente.',
-            'imagem_area.file' => 'Você precisa enviar o arquivo da localização da análise.',
+    $request->validate([
+        'relatorio_formulario_id' => 'required',
+        'nome_empresa' => 'required|max:255',
+        'nome_cliente' => 'required|max:255',
+        'objetivo' => 'required|max:500',
+        'observacoes' => 'required|max:500',
+        'localizacao_analise' => 'required|max:255',
+        'referencias_proximas' => 'required|max:255',
+        'panorama' => 'required|max:255',
+        'logo_empresa' => 'required|file',
+        'logo_cliente' => 'required|file',
+    ], 
+    [
+        'required' => 'O campo :attribute é obrigatório.',
+        'max' => 'O campo :attribute deve ter no máximo :max caracteres.',
+        'logo_empresa.file' => 'Você precisa enviar o arquivo da logo da empresa.',
+        'logo_cliente.file' => 'Você precisa enviar o arquivo da logo do cliente.',
+        'imagem_area.file' => 'Você precisa enviar o arquivo da localização da análise.',
+    ]);
+
+    // PREPARAR DADOS PARA O NODE.JS BELCHIOR
+    $dados_modelo = self::modelo1($request);
+    $referencias_proximas_array = self::processarCampoTexto($request->referencias_proximas);
+    $dados_para_nodejs = [
+        'dados' => [
+            'nome_empresa' => $request->nome_empresa,
+            'nome_cliente' => $request->nome_cliente,
+            'objetivo' => $request->objetivo,
+            'observacoes' => $request->observacoes,
+            'localizacao_analise' => $request->localizacao_analise,
+            'referencias_proximas' => $request->referencias_proximas,
+            'panorama' => $request->panorama,
+
+            //pra separar com virgulas no pdf
+             'referencias_proximas_lista' => $referencias_proximas_array,
+        ],
+        'dados_modelo' => [
+            'total_perguntas_respondidas' => Models\Resposta::where("formulario_id", $request->relatorio_formulario_id)->count(),
+            'total_pilares' => [
+                'Pessoas' => self::total_perguntas_respondidas_pilar($request->relatorio_formulario_id, 'Pessoas'),
+                'Tecnologia' => self::total_perguntas_respondidas_pilar($request->relatorio_formulario_id, 'Tecnologia'),
+                'Processos' => self::total_perguntas_respondidas_pilar($request->relatorio_formulario_id, 'Processos'),
+                'Informação' => self::total_perguntas_respondidas_pilar($request->relatorio_formulario_id, 'Informação'),
+                'Gestão' => self::total_perguntas_respondidas_pilar($request->relatorio_formulario_id, 'Gestão'),
+            ],
+            'porcentagem_pilar' => $dados_modelo['porcentagem_pilar'] ?? [
+                'Pessoas' => 0,
+                'Tecnologia' => 0,
+                'Processos' => 0,
+                'Informação' => 0,
+                'Gestão' => 0,
+            ]
+        ],
+        'imagens' => [
+            'logo_empresa' => Arquivo::converter_imagem_base_64($request, 'logo_empresa'),
+            'logo_cliente' => Arquivo::converter_imagem_base_64($request, 'logo_cliente'),
+            'imagem_area' => $request->hasFile('imagem_area') ? 
+                Arquivo::converter_imagem_base_64($request, 'imagem_area') : null,
+        ]
+    ];
+
+    // TENTAR ENVIAR PARA NODE.JS
+    try {
+        Log::info('🚀 Tentando gerar PDF via Node.js', [
+            'servidor' => 'http://localhost:3001/generate-pdf',
+            'dados_empresa' => $request->nome_empresa
         ]);
+        
+        $response = Http::timeout(30)->post('http://localhost:3001/generate-pdf', $dados_para_nodejs);
+        
+        if ($response->successful()) {
+            Log::info('✅ PDF gerado com sucesso via Node.js');
+            
+            return response($response->body(), 200, [
+                'Content-Type' => 'application/pdf',
+                'Content-Disposition' => 'inline; filename="relatorio-'.date('Y-m-d-H-i-s').'.pdf"',
+            ]);
+        } else {
+            Log::error('❌ Erro no servidor Node.js', [
+                'status' => $response->status(),
+                'response' => $response->body()
+            ]);
+            throw new Exception('Servidor PDF retornou erro: ' . $response->status());
+        }
+        
+    } catch (Exception $e) {
+        // FALLBACK: USAR MÉTODO ANTIGO
+        Log::error('⚠️ Fallback para método antigo: ' . $e->getMessage());
+        
+        // Se Node.js falhar, usar o método original
         $dados = [
             'dados' => $request,
-            'dados_modelo' => self::modelo1($request),            
+            'dados_modelo' => $dados_modelo,            
             'imagens' => [
                 'logo_empresa' => Arquivo::converter_imagem_base_64($request, 'logo_empresa'),
                 'logo_cliente' => Arquivo::converter_imagem_base_64($request, 'logo_cliente'),                
-                'imagem_area' => Arquivo::converter_imagem_base_64($request, 'imagem_area'),
+                'imagem_area' => $request->hasFile('imagem_area') ? 
+                    Arquivo::converter_imagem_base_64($request, 'imagem_area') : null,
             ]            
         ];        
         return view('formularios.modelos_de_relatorio.modelo1', $dados);
     }
+}
 
     private static function modelo1($request){
-        $total_perguntas_respondidas = Models\Resposta::where("formulario_id", $request->relatorio_formulario_id)->count();        
-        $total_pilares = [
-            'Pessoas' => self::total_perguntas_respondidas_pilar($request->relatorio_formulario_id, 'Pessoas'),
-            'Tecnologia' => self::total_perguntas_respondidas_pilar($request->relatorio_formulario_id, 'Tecnologia'),
-            'Processos' => self::total_perguntas_respondidas_pilar($request->relatorio_formulario_id, 'Processos'),
-            'Informação' => self::total_perguntas_respondidas_pilar($request->relatorio_formulario_id, 'Informação'),
-            'Gestão' => self::total_perguntas_respondidas_pilar($request->relatorio_formulario_id, 'Gestão'),
-        ];
-        $porcentagem_pilar = [
-            'Pessoas' => percentual_puro($total_perguntas_respondidas, $total_pilares['Pessoas']),
-            'Tecnologia' => percentual_puro($total_perguntas_respondidas, $total_pilares['Tecnologia']),
-            'Processos' => percentual_puro($total_perguntas_respondidas, $total_pilares['Processos']),
-            'Informação' => percentual_puro($total_perguntas_respondidas, $total_pilares['Informação']),
-            'Gestão' => percentual_puro($total_perguntas_respondidas, $total_pilares['Gestão']),
-        ];
-        return [
-            'porcentagem_pilar' => $porcentagem_pilar,
-            'respostas' => self::todas_perguntas_respondidas($request->relatorio_formulario_id)
-        ];
-    }
+    $total_perguntas_respondidas = Models\Resposta::where("formulario_id", $request->relatorio_formulario_id)->count();        
+    $total_pilares = [
+        'Pessoas' => self::total_perguntas_respondidas_pilar($request->relatorio_formulario_id, 'Pessoas'),
+        'Tecnologia' => self::total_perguntas_respondidas_pilar($request->relatorio_formulario_id, 'Tecnologia'),
+        'Processos' => self::total_perguntas_respondidas_pilar($request->relatorio_formulario_id, 'Processos'),
+        'Informação' => self::total_perguntas_respondidas_pilar($request->relatorio_formulario_id, 'Informação'),
+        'Gestão' => self::total_perguntas_respondidas_pilar($request->relatorio_formulario_id, 'Gestão'),
+    ];
+    
+    
+    $porcentagem_pilar_original = [
+        'Pessoas' => percentual_puro($total_perguntas_respondidas, $total_pilares['Pessoas']),
+        'Tecnologia' => percentual_puro($total_perguntas_respondidas, $total_pilares['Tecnologia']),
+        'Processos' => percentual_puro($total_perguntas_respondidas, $total_pilares['Processos']),
+        'Informação' => percentual_puro($total_perguntas_respondidas, $total_pilares['Informação']),
+        'Gestão' => percentual_puro($total_perguntas_respondidas, $total_pilares['Gestão']),
+    ];
+    
+    //  NOVA PORCENTAGEM  - BASEADA EM "ATENDE PLENAMENTE" BELCHIOR
+    $porcentagem_pilar = self::calcular_porcentagem_adequacao_por_pilar($request->relatorio_formulario_id);
+    
+    return [
+        'porcentagem_pilar' => $porcentagem_pilar, 
+        'porcentagem_pilar_original' => $porcentagem_pilar_original, 
+        'total_pilares' => $total_pilares, 
+        'respostas' => self::todas_perguntas_respondidas($request->relatorio_formulario_id)
+    ];
+}
 
     private static function total_perguntas_respondidas_pilar($formulario_id, $pilar){
         $tematica = Models\Tematica::where('nome', $pilar)->first();
@@ -442,4 +528,69 @@ class FormularioController extends Controller
         }
         return $classe;        
     }
+
+    /**
+ * Processa campo de texto dividindo por vírgulas e limpando espaços | Belchior
+ *  ideia para melhorar o campo de referencias proximas e panorama situacional no pdf.
+ * @param string $texto
+ * @return array
+ */
+private static function processarCampoTexto($texto) {
+    if (empty($texto)) {
+        return [];
+    }
+    
+    // Dividir por vírgula
+    $itens = explode(',', $texto);
+    
+    // Limpar espaços e filtrar itens vazios
+    $itens_limpos = array_filter(array_map('trim', $itens), function($item) {
+        return !empty($item);
+    });
+    
+    // Retornar array reindexado
+    return array_values($itens_limpos);
+}
+
+//BELCHIOR
+/**
+ * Calcula a porcentagem de adequação por pilar
+ * Fórmula: (Perguntas com nivel_adequacao = 1) / (Total de perguntas do pilar) × 100
+ * 
+ * @param int $formulario_id
+ * @return array
+ */
+private static function calcular_porcentagem_adequacao_por_pilar($formulario_id) {
+    // Buscar todas as respostas com JOIN para pegar a temática
+    $resultados = DB::table('respostas')
+        ->join('perguntas', 'respostas.pergunta_id', '=', 'perguntas.id')
+        ->join('tematicas', 'perguntas.tematica_id', '=', 'tematicas.id')
+        ->where('respostas.formulario_id', $formulario_id)
+        ->select(
+            'tematicas.nome as tematica_nome',
+            DB::raw('COUNT(*) as total_respostas'),
+            DB::raw('COUNT(CASE WHEN respostas.nivel_adequacao = 1 THEN 1 END) as respostas_adequadas')
+        )
+        ->groupBy('tematicas.nome')
+        ->get();
+
+    // Inicializar array com todos os pilares zerados
+    $porcentagens = [
+        'Pessoas' => 0,
+        'Tecnologia' => 0,
+        'Processos' => 0,
+        'Informação' => 0,
+        'Gestão' => 0,
+    ];
+
+    // Calcular porcentagem para cada pilar que tem dados
+    foreach ($resultados as $resultado) {
+        if ($resultado->total_respostas > 0) {
+            $porcentagem = ($resultado->respostas_adequadas / $resultado->total_respostas) * 100;
+            $porcentagens[$resultado->tematica_nome] = round($porcentagem, 1);
+        }
+    }
+
+    return $porcentagens;
+}
 }

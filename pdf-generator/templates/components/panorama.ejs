@@ -1,0 +1,116 @@
+<div class="min-h-screen page-break bg-white text-black flex flex-col relative">
+    <!-- CABEÇALHO REUTILIZÁVEL -->
+    <%- include('header', { numeroPagina: numeroPaginas?.panorama || '05',
+    tituloSecao: 'PANORAMA SITUACIONAL' }) %>
+
+    <!-- Conteúdo principal -->
+    <div class="flex-1 flex flex-col relative z-0">
+        <!-- Contextualização da Análise -->
+        <div class="text-center px-6 mb-8">
+            <h2
+                class="text-2xl text-sky-900 font-semibold leading-relaxed mb-8"
+            >
+                Contextualização da Análise
+            </h2>
+
+            <!-- Container da Imagem da Área -->
+            <div class="flex justify-center items-center mb-1">
+                <!-- Barra azul lateral mais próxima -->
+                <div
+                    class="w-12 bg-blue-500 mr-4 rounded-md"
+                    style="height: 280px"
+                ></div>
+
+                <!-- Imagem da área -->
+                <div
+                    class="relative border-4 border-blue-300 border-r-4 bg-gray-100 shadow-md flex items-center justify-center overflow-hidden"
+                    style="width: 500px; height: 280px"
+                >
+                    <% if (imagens && imagens.imagem_area) { %>
+                    <img
+                        src="<%= imagens.imagem_area %>"
+                        alt="Imagem da Área"
+                        class="rounded-sm"
+                        style="transition: all 0.3s ease"
+                        onload="adaptImageToContainer(this, 500, 280)"
+                    />
+                    <% } else { %>
+                    <div class="w-full h-full flex items-center justify-center">
+                        <span class="text-red-500 text-xl font-bold">
+                            IMAGEM DA ÁREA
+                        </span>
+                    </div>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+
+        <!-- Seção de Referências Próximas -->
+        <div class="px-16 py-4 bg-white">
+            <h3 class="text-2xl font-bold text-sky-900 mb-4 text-center">
+                Referências Próximas
+            </h3>
+
+            <% if (dados?.referencias_proximas_lista &&
+            dados.referencias_proximas_lista.length > 0) { %>
+            <ol class="list-none space-y-1">
+                <% dados.referencias_proximas_lista.forEach((item, index) => {
+                %>
+                <li class="flex items-start">
+                    <span
+                        class="inline-flex items-center justify-center w-6 h-6 bg-sky-800 text-white rounded-full text-sm font-bold mr-3 mb-1 flex-shrink-0"
+                    >
+                        <%= index + 1 %>
+                    </span>
+                    <span
+                        class="text-sm text-sky-800 leading-relaxed flex-1 bg-blue-100 rounded-md pl-2"
+                    >
+                        <%= item %>
+                    </span>
+                </li>
+                <% }); %>
+            </ol>
+            <% } else { %>
+            <p class="text-lg text-gray-800 leading-relaxed text-justify">
+                <%= dados?.referencias_proximas || 'Informações não fornecidas.'
+                %>
+            </p>
+            <% } %>
+        </div>
+
+        <!-- Seção de Panorama Situacional - Exposição ao Risco -->
+        <div class="px-16 py-4 bg-white section-break-inside">
+            <h3 class="text-2xl font-bold text-sky-900 mb-4 text-center">
+                Panorama Situacional - Exposição ao Risco
+            </h3>
+            <div class="max-w-3xl mx-auto">
+                <p
+                    class="text-lg text-red-500 leading-relaxed break-words hyphens-auto text-center"
+                >
+                    <%= dados?.panorama || 'Informações não fornecidas.' %>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Rodapé -->
+    <%- include('footer') %>
+
+    <!-- Script para adaptar imagem -->
+    <script>
+        function adaptImageToContainer(img, containerWidth, containerHeight) {
+            if (img.complete && img.naturalWidth !== 0) {
+                processImage();
+            } else {
+                img.onload = processImage;
+            }
+
+            function processImage() {
+                // Força a imagem a ocupar exatamente as dimensões do container
+                img.style.width = containerWidth + "px";
+                img.style.height = containerHeight + "px";
+                img.style.objectFit = "fill";
+            }
+        }
+    </script>
+</div>

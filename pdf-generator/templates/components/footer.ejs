@@ -1,0 +1,13 @@
+<footer class="mt-auto w-full bg-white relative z-20">
+    <!-- Linha azul -->
+    <div
+        class="w-full h-px bg-gradient-to-r from-blue-400 via-blue-500 to-blue-400"
+    ></div>
+
+    <!-- Conteúdo do rodapé -->
+    <div class="p-4 flex justify-between text-sm text-gray-800">
+        <div>Análise de risco</div>
+        <div><%= dados?.nome_cliente || 'Nome do cliente' %></div>
+        <div><%= dados?.nome_empresa || 'Nome da empresa' %></div>
+    </div>
+</footer>

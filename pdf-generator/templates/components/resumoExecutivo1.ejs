@@ -1,0 +1,81 @@
+<div class="min-h-screen page-break bg-white text-black flex flex-col relative">
+    <%- include('header', { numeroPagina: numeroPaginas?.resumoExecutivo + 1 ||
+    '07', tituloSecao: 'RESUMO EXECUTIVO' }) %>
+
+    <div class="flex-1 px-10 py-5 space-y-6">
+        <% const pils = [ { imagem: imagens.pessoas, chave: "Pessoas" }, {
+        imagem: imagens.tecnologia, chave: "Tecnologia" }, { imagem:
+        imagens.processos, chave: "Processos" }, { imagem: imagens.informacoes,
+        chave: "Informação" }, { imagem: imagens.gestao, chave: "Gestão" } ]; %>
+        <% pils.forEach(pilar => { %>
+        <div
+            class="flex items-center border-2 border-blue-600 rounded-lg p-1 max-w-4xl"
+        >
+            <!-- Imagem do Pilar -->
+            <div
+                class="flex-shrink-0 w-24 h-24 flex justify-center items-center"
+            >
+                <img
+                    src="<%= pilar.imagem %>"
+                    alt="<%= pilar.chave %>"
+                    class="max-w-full max-h-full object-contain"
+                />
+            </div>
+
+            <!-- Linha de separação -->
+            <div class="w-px bg-blue-500 mx-4 h-20"></div>
+
+            <!-- Tópicos -->
+            <div class="flex flex-1 justify-around">
+                <% if (dados_modelo.analise_topicos &&
+                dados_modelo.analise_topicos[pilar.chave]) { %> <%
+                dados_modelo.analise_topicos[pilar.chave].forEach(item => { %>
+                <div class="text-center">
+                    <div class="relative mb-1">
+                        <svg class="w-20 h-20 transform -rotate-90">
+                            <!-- círculo de fundo -->
+                            <circle
+                                cx="40"
+                                cy="40"
+                                r="32"
+                                stroke="#93c5fd"
+                                stroke-width="12"
+                                fill="none"
+                            />
+                            <!-- círculo da porcentagem -->
+                            <circle
+                                cx="40"
+                                cy="40"
+                                r="32"
+                                stroke="#0c1e4f"
+                                stroke-width="12"
+                                fill="none"
+                                stroke-dasharray="<%= 201 * (item.porcentagem / 100) %> 201"
+                            />
+                        </svg>
+                        <div
+                            class="absolute inset-0 flex items-center justify-center"
+                        >
+                            <span class="text-xs font-bold text-blue-950">
+                                <%= item.porcentagem %>%
+                            </span>
+                        </div>
+                    </div>
+                    <p
+                        class="text-xs font-semibold text-sky-900 max-w-20 break-words"
+                    >
+                        <%= item.topico_nome %>
+                    </p>
+                </div>
+                <% }) %> <% } else { %>
+                <p class="text-center text-gray-500 italic">
+                    Sem dados disponíveis
+                </p>
+                <% } %>
+            </div>
+        </div>
+        <% }) %>
+    </div>
+
+    <%- include('footer') %>
+</div>

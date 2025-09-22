@@ -1,0 +1,46 @@
+<!-- METODOLOGIA - VERSÃO FINAL COM IMAGEM MAIS PARA BAIXO -->
+<div class="min-h-screen page-break bg-white text-black flex flex-col relative">
+    <!-- CABEÇALHO REUTILIZÁVEL -->
+    <%- include('header', { numeroPagina: numeroPaginas?.metodologia || '04',
+    tituloSecao: 'METODOLOGIA' }) %>
+
+    <!-- Conteúdo principal -->
+    <div class="flex-1 flex flex-col relative z-0 gap-y-4">
+        <!-- Texto explicativo centralizado -->
+        <div class="text-center px-6 max-w-xl mx-auto">
+            <p class="text-xl text-sky-900 leading-relaxed">
+                Identificando vulnerabilidades e<br />
+                deficiências em 5 etapas:
+            </p>
+        </div>
+
+        <!-- Imagem dos pilares centralizada e maior -->
+        <div class="flex justify-center px-4 mt-[70px] flex-1 relative z-10">
+            <% if (imagens && imagens.pilares) { %>
+            <img
+                src="<%= imagens.pilares %>"
+                alt="Metodologia - 5 Pilares"
+                class="object-cover w-full h-full mx-auto block scale-[1.50]"
+                style="object-position: top"
+            />
+            <% } else { %>
+
+            <div
+                class="w-full flex items-center justify-center bg-gradient-to-r from-blue-800 to-blue-600 rounded-lg"
+                style="height: 70vh; max-width: 95%"
+            >
+                <span class="text-white text-lg font-semibold text-center">
+                    🖼️ Imagem dos pilares não encontrada
+                    <br />
+                    <small>
+                        Verifique se pilares.png está em pdf-generator/imagens/
+                    </small>
+                </span>
+            </div>
+            <% } %>
+        </div>
+    </div>
+
+    <!-- Rodapé -->
+    <%- include('footer') %>
+</div>

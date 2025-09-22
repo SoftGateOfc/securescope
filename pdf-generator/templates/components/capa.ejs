@@ -1,49 +1,97 @@
 <!-- CAPA DO RELATÓRIO -->
-<div class="min-h-screen flex flex-col justify-center items-center">
-    <!-- Logo da Empresa -->
-    <% if (imagens && imagens.logo_empresa) { %>
-    <div class="mb-8">
-        <img src="<%= imagens.logo_empresa %>" alt="Logo" class="h-20 w-auto" />
-    </div>
-    <% } %>
-
-    <!-- Título -->
-    <div class="text-center space-y-6">
-        <h1 class="text-4xl font-bold text-gray-900">Relatório de Análise</h1>
-
-        <h2 class="text-2xl text-blue-600 font-semibold">
-            <%= dados && dados.nome_cliente ? dados.nome_cliente : 'Cliente' %>
-        </h2>
-
-        <!-- Informações básicas -->
-        <div class="bg-gray-100 p-6 rounded-lg max-w-md">
-            <p>
-                <strong>Local:</strong> <%= dados && dados.localizacao_analise ?
-                dados.localizacao_analise : 'Não informado' %>
-            </p>
-            <p>
-                <strong>Data:</strong> <%= dataGeracao ? dataGeracao : 'Hoje' %>
-            </p>
+<div class="min-h-screen flex">
+    <!-- Lado Azul Claro -->
+    <div
+        class="w-1/3 bg-gradient-to-r from-blue-600 to-blue-400 relative border-r-8 border-blue-300"
+    >
+        <!-- Círculo decorativo -->
+        <div class="absolute -top-48 -left-48">
+            <div
+                class="w-96 h-96 border-8 border-white rounded-full flex items-center justify-center"
+            >
+                <div
+                    class="w-48 h-48 border-8 border-white rounded-full bg-blue-200 bg-opacity-30"
+                ></div>
+            </div>
         </div>
     </div>
 
-    <!-- Logo do Cliente -->
-    <% if (imagens && imagens.logo_cliente) { %>
-    <div class="mt-8">
-        <img
-            src="<%= imagens.logo_cliente %>"
-            alt="Logo Cliente"
-            class="h-16 w-auto"
-        />
-    </div>
-    <% } %>
+    <!-- Lado Branco -->
+    <div class="w-2/3 bg-white p-12 flex flex-col text-black">
+        <!-- Logo da Empresa -->
+        <% if (imagens && imagens.logo_empresa) { %>
+        <div class="text-right mb-8">
+            <img
+                src="<%= imagens.logo_empresa %>"
+                alt="Logo"
+                class="w-24 h-24 object-contain inline-block"
+            />
+        </div>
+        <% } %>
 
-    <!-- Rodapé da Capa -->
-    <div class="absolute bottom-8 left-0 right-0 text-center">
-        <p class="text-sm text-gray-600">Documento Confidencial</p>
-        <p class="text-xs text-gray-500">
-            Gerado em <%= dataGeracao ? dataGeracao : new
-            Date().toLocaleDateString('pt-BR') %>
-        </p>
+        <!-- Conteúdo Principal -->
+        <div class="flex-1 flex flex-col justify-center">
+            <!-- Data -->
+            <div class="text-center text-2xl text-gray-800 font-bold mb-4">
+                <%= dataGeracao ? dataGeracao.split(' ')[0] : new
+                Date().toLocaleDateString('pt-BR') %>
+            </div>
+
+            <!-- Título Principal -->
+            <div class="text-center">
+                <h1 class="text-6xl font-bold leading-tight mb-6">
+                    ANÁLISE<br />DE RISCO
+                </h1>
+
+                <p class="text-xl text-gray-800 mb-12 max-w-md mx-auto">
+                    Conformidade e segurança se alcançam com análise de riscos
+                    aplicada.
+                </p>
+            </div>
+
+            <!-- Informações -->
+            <div class="space-y-4">
+                <div>
+                    <div class="text-lg font-bold text-black">
+                        Preparado para:
+                    </div>
+                    <div class="text-lg text-gray-800 ml-4">
+                        <%= dados?.nome_cliente || 'NOME DO CLIENTE' %>
+                    </div>
+                </div>
+
+                <div>
+                    <div class="text-lg font-bold text-black">
+                        Elaborado por:
+                    </div>
+                    <div class="text-lg text-gray-800 ml-4">
+                        <%= dados?.nome_empresa || 'NOME DA EMPRESA' %>
+                    </div>
+                </div>
+
+                <% if (dados?.localizacao_analise) { %>
+                <div>
+                    <div class="text-lg font-bold text-black">Local:</div>
+                    <div class="text-lg text-gray-800 ml-4">
+                        <%= dados.localizacao_analise %>
+                    </div>
+                </div>
+                <% } %>
+            </div>
+
+            <!-- Estatística Destaque -->
+            <div
+                class="bg-blue-50 border-l-4 border-blue-500 p-6 mt-8 text-center"
+            >
+                <div class="text-4xl font-bold text-blue-800">
+                    <%= dados_modelo?.total_perguntas_respondidas || 0 %>
+                </div>
+                <div
+                    class="text-sm text-gray-700 uppercase tracking-wide font-bold"
+                >
+                    Itens Analisados
+                </div>
+            </div>
+        </div>
     </div>
 </div>

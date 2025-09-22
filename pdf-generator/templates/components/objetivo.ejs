@@ -1,0 +1,45 @@
+<!-- OBJETIVO - VERSÃO REFATORADA COM COMPONENTES -->
+<div class="min-h-screen page-break bg-white text-black flex flex-col relative">
+    <!-- CABEÇALHO REUTILIZÁVEL -->
+    <%- include('header', { numeroPagina: numeroPaginas?.objetivo || '03',
+    tituloSecao: 'OBJETIVO' }) %>
+
+    <!-- Conteúdo principal -->
+    <div class="flex-1 flex flex-col relative z-0">
+        <!-- Imagem ocupando toda a largura da página -->
+        <div
+            class="w-full relative z-10"
+            style="background: linear-gradient(to bottom, #01244ef8, #0061fc)"
+        >
+            <div class="h-6 w-full bg-blue-500"></div>
+            <div class="imagem-cidade-forca"></div>
+            <div class="h-6 w-full bg-blue-500"></div>
+        </div>
+
+        <!-- Texto principal -->
+        <div class="flex-1 px-16 py-12 space-y-9 relative z-10 bg-white">
+            <p class="text-xl text-sky-900 leading-relaxed text-justify">
+                Realizar análise de riscos para elevar o nível de segurança da
+                <strong class="text-blue-600">
+                    <%= dados?.localizacao_analise || 'NOME DO LOCAL' %> </strong
+                >, propondo soluções priorizadas para mitigar vulnerabilidades
+                identificadas.
+            </p>
+
+            <p class="text-xl text-sky-900 leading-relaxed text-justify">
+                O trabalho contempla: identificação dos riscos e fragilidades;
+                definição das recomendações mais adequadas; classificação por
+                criticidade; consolidação dos resultados em relatório executivo,
+                permitindo ao
+                <strong class="text-blue-600">
+                    <%= dados?.nome_empresa || 'NOME DA EMPRESA' %>
+                </strong>
+                planejar ações corretivas e prevenir incidentes que possam
+                impactar pessoas, ativos e operação, de forma contínua e eficaz.
+            </p>
+        </div>
+
+        <!-- Rodapé -->
+        <%- include('footer') %>
+    </div>
+</div>

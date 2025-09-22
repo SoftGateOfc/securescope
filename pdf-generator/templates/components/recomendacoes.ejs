@@ -1,0 +1,213 @@
+<% if (dadosListaRecomendacoes && dadosListaRecomendacoes.temLista) { %> <%
+dadosListaRecomendacoes.paginasLista.forEach((pagina, indicePagina) => { %>
+
+<!-- PÁGINA <%= pagina.numeroPagina %> DAS RECOMENDAÇÕES -->
+<div class="min-h-screen flex flex-col bg-white text-black">
+    <!-- HEADER -->
+    <%- include('header', { numeroPagina: pagina.numeroPaginaExibicao + 1,
+    tituloSecao: 'RECOMENDAÇÕES' }) %>
+
+    <!-- CONTEÚDO -->
+    <div class="px-8 py-6">
+        <!-- TABELA -->
+        <div
+            class="bg-white border border-gray-200 rounded-lg overflow-hidden shadow-sm"
+        >
+            <table class="w-full table-fixed border-collapse">
+                <colgroup>
+                    <col style="width: 27%" />
+                    <col style="width: 9%" />
+                    <col style="width: 46%" />
+                    <col style="width: 18%" />
+                </colgroup>
+                <thead>
+                    <tr>
+                        <th
+                            class="px-4 py-5 text-center text-sm font-semibold bg-sky-800 text-white border border-blue-500"
+                        >
+                            Pilar
+                        </th>
+                        <th
+                            class="px-4 py-3 text-center text-sm font-semibold bg-sky-800 text-white border border-blue-500"
+                        >
+                            NC
+                        </th>
+                        <th
+                            class="px-4 py-3 text-center text-sm font-semibold bg-sky-800 text-white border border-blue-500"
+                        >
+                            Recomendações
+                        </th>
+                        <th
+                            class="px-4 py-3 text-center text-sm font-semibold bg-sky-800 text-white border border-blue-500"
+                        >
+                            Prioridade
+                        </th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    <% const pils = [ { imagem: imagens.pessoas, chave:
+                    "Pessoas" }, { imagem: imagens.tecnologia, chave:
+                    "Tecnologia" }, { imagem: imagens.processos, chave:
+                    "Processos" }, { imagem: imagens.informacoes, chave:
+                    "Informação" }, { imagem: imagens.gestao, chave: "Gestão" }
+                    ]; %> <% pagina.itens.forEach((item, indiceItem) => { %> <%
+                    const pilar = pils[indiceItem % pils.length]; %>
+
+                    <tr
+                        class="<%= indiceItem % 2 === 0 ? 'bg-gray-100' : 'bg-white' %> hover:bg-blue-50"
+                    >
+                        <!-- PILAR -->
+                        <td
+                            class="px-4 py-3 text-center align-middle border border-blue-500"
+                        >
+                            <div
+                                class="w-full h-10 flex items-center justify-center bg-blue-50 rounded-sm"
+                            >
+                                <% if (pilar.imagem) { %>
+                                <img
+                                    src="<%= pilar.imagem %>"
+                                    alt="<%= pilar.chave %>"
+                                    class="w-[90%] h-full object-contain transform scale-[1.2]"
+                                />
+                                <% } else { %>
+                                <div
+                                    class="w-8 h-8 bg-blue-500 rounded-full"
+                                ></div>
+                                <% } %>
+                            </div>
+                        </td>
+
+                        <!-- NC -->
+                        <td
+                            class="px-4 py-3 text-center align-middle border border-blue-500"
+                        >
+                            <span
+                                class="inline-block bg-gray-100 text-gray-800 px-2 py-1 rounded text-xs font-mono font-bold"
+                            >
+                                <%= item.nc %>
+                            </span>
+                        </td>
+
+                        <!-- RECOMENDAÇÕES -->
+                        <td
+                            class="px-4 py-3 border border-blue-500 text-center align-middle text-sm text-gray-900"
+                        >
+                            <%= item.recomendacaoTexto %>
+                        </td>
+
+                        <!-- PRIORIDADE -->
+                        <td
+                            class="px-4 py-3 text-center align-middle border border-blue-500"
+                        >
+                            <div class="flex items-center justify-center">
+                                <% if (item.prioridade === 'vermelho-escuro') {
+                                %>
+                                <span
+                                    class="px-3 py-1 rounded-full text-xs font-bold bg-red-600 text-white"
+                                    >CP</span
+                                >
+                                <% } else if (item.prioridade === 'amarelo') {
+                                %>
+                                <span
+                                    class="px-3 py-1 rounded-full text-xs font-bold bg-yellow-500 text-white"
+                                    >MP</span
+                                >
+                                <% } else if (item.prioridade === 'verde-claro')
+                                { %>
+                                <span
+                                    class="px-3 py-1 rounded-full text-xs font-bold bg-green-500 text-white"
+                                    >LP</span
+                                >
+                                <% } else { %>
+                                <span
+                                    class="px-3 py-1 rounded-full text-xs font-bold bg-gray-500 text-white"
+                                    >MP</span
+                                >
+                                <% } %>
+                            </div>
+                        </td>
+                    </tr>
+                    <% }); %>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- INFORMAÇÕES DA PÁGINA -->
+        <div
+            class="mt-4 flex justify-between items-center text-sm text-gray-600"
+        >
+            <span
+                >Página <%= pagina.numeroPagina %> de <%= pagina.totalPaginas %>
+                - Recomendações</span
+            >
+            <span
+                >Itens <%= pagina.indiceInicio %> - <%= pagina.indiceFim %> de
+                <%= pagina.totalItens %></span
+            >
+        </div>
+
+        <!-- LEGENDA -->
+        <div class="mt-6 flex flex-col items-center space-y-4">
+            <!-- LEGENDA DOS PILARES -->
+            <div
+                class="border-blue-400 border-2 rounded-lg p-4 flex justify-center w-full"
+            >
+                <div class="flex gap-6">
+                    <% pils.forEach(p => { %>
+                    <div class="flex items-center gap-1 text-xs">
+                        <img
+                            src="<%= p.imagem %>"
+                            alt="<%= p.chave %>"
+                            class="w-10 h-10 object-contain"
+                        />
+                        <span class="font-semibold"><%= p.chave %></span>
+                    </div>
+                    <% }); %>
+                </div>
+            </div>
+
+            <!-- LEGENDA DAS PRIORIDADES -->
+            <div
+                class="border-blue-400 border-2 rounded-lg p-4 flex justify-center w-full"
+            >
+                <div class="flex gap-6">
+                    <div class="flex items-center gap-3 text-xs">
+                        <span
+                            class="px-3 py-1 rounded-full text-white font-bold bg-red-600"
+                            >CP</span
+                        >
+                        <span class="text-red-600 font-semibold"
+                            >Curto Prazo</span
+                        >
+                    </div>
+                    <div class="flex items-center gap-3 text-xs">
+                        <span
+                            class="px-3 py-1 rounded-full text-white font-bold bg-yellow-500"
+                            >MP</span
+                        >
+                        <span class="text-yellow-500 font-semibold"
+                            >Médio Prazo</span
+                        >
+                    </div>
+                    <div class="flex items-center gap-3 text-xs">
+                        <span
+                            class="px-3 py-1 rounded-full text-white font-bold bg-green-500"
+                            >LP</span
+                        >
+                        <span class="text-green-500 font-semibold"
+                            >Longo Prazo</span
+                        >
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <%- include('footer', { dados: dados }) %>
+</div>
+
+<% }); %> <% } else { %>
+<!-- Se não houver recomendações, não exibe nada -->
+<% } %>

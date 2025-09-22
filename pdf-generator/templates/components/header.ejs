@@ -1,0 +1,68 @@
+<!-- CABEÇALHO REUTILIZÁVEL -->
+<!-- Container para elementos decorativos -->
+<div
+    class="absolute inset-0"
+    style="
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 5;
+        pointer-events: none;
+    "
+>
+    <!-- Círculo decorativo azul no topo esquerdo - 20px mais para cima e esquerda -->
+    <div
+        class="absolute"
+        style="position: absolute; top: -125px; left: -125px; z-index: 5"
+    >
+        <div
+            class="w-80 h-80 border-8 border-blue-500 rounded-full flex items-center justify-center opacity-80"
+        >
+            <div
+                class="w-48 h-48 border-8 border-blue-500 rounded-full flex items-center justify-center opacity-80"
+            ></div>
+        </div>
+    </div>
+
+    <!-- Bolinhas azuis no topo - POSIÇÃO MANTIDA -->
+    <div
+        class="absolute"
+        style="position: absolute; top: 10px; left: 15px; z-index: 6"
+    >
+        <div class="grid grid-cols-2 gap-4">
+            <div class="w-4 h-4 bg-blue-500 rounded-full opacity-70"></div>
+            <div class="w-4 h-4 bg-blue-500 rounded-full opacity-70"></div>
+            <div class="w-4 h-4 bg-blue-500 rounded-full opacity-60"></div>
+            <div class="w-4 h-4 bg-blue-500 rounded-full opacity-60"></div>
+            <div class="w-4 h-4 bg-blue-500 rounded-full opacity-50"></div>
+            <div class="w-4 h-4 bg-blue-500 rounded-full opacity-50"></div>
+            <div class="w-4 h-4 bg-blue-500 rounded-full opacity-40"></div>
+            <div class="w-4 h-4 bg-blue-500 rounded-full opacity-40"></div>
+            <div class="w-4 h-4 bg-blue-500 rounded-full opacity-30"></div>
+            <div class="w-4 h-4 bg-blue-500 rounded-full opacity-30"></div>
+        </div>
+    </div>
+</div>
+
+<!-- Cabeçalho da página com título -->
+<div class="bg-white relative" style="padding-top: 80px; padding-bottom: 40px">
+    <div class="flex items-center w-full px-12">
+        <!-- Espaço vazio -->
+        <div class="w-1/4"></div>
+
+        <!-- Linha azul + número da página -->
+        <div class="flex flex-1 items-center">
+            <div
+                class="h-[1px] flex-1 bg-gradient-to-r from-blue-200 via-blue-600 to-blue-200"
+            ></div>
+            <span class="ml-2 text-sm font-semibold text-black tracking-wide">
+                Página <%= numeroPagina || '01' %>
+            </span>
+        </div>
+    </div>
+    <h1 class="mt-8 text-4xl font-bold text-blue-700 text-center">
+        <%= tituloSecao || 'TÍTULO DA SEÇÃO' %>
+    </h1>
+</div>
