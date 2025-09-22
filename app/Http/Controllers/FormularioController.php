@@ -18,6 +18,7 @@ use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Illuminate\Support\Facades\Http;
 use Exception;
 
+
 class FormularioController extends Controller
 {
     use AuthorizesRequests;    
@@ -337,8 +338,11 @@ class FormularioController extends Controller
                 'Processos' => 0,
                 'Informação' => 0,
                 'Gestão' => 0,
-            ]
+            ],
+             'respostas' => $dados_modelo['respostas'] ?? [],
+            'analise_topicos' => $dados_modelo['analise_topicos'] ?? []
         ],
+        
         'imagens' => [
             'logo_empresa' => Arquivo::converter_imagem_base_64($request, 'logo_empresa'),
             'logo_cliente' => Arquivo::converter_imagem_base_64($request, 'logo_cliente'),
@@ -400,7 +404,6 @@ class FormularioController extends Controller
         'Gestão' => self::total_perguntas_respondidas_pilar($request->relatorio_formulario_id, 'Gestão'),
     ];
     
-    
     $porcentagem_pilar_original = [
         'Pessoas' => percentual_puro($total_perguntas_respondidas, $total_pilares['Pessoas']),
         'Tecnologia' => percentual_puro($total_perguntas_respondidas, $total_pilares['Tecnologia']),
@@ -409,13 +412,31 @@ class FormularioController extends Controller
         'Gestão' => percentual_puro($total_perguntas_respondidas, $total_pilares['Gestão']),
     ];
     
-    //  NOVA PORCENTAGEM  - BASEADA EM "ATENDE PLENAMENTE" BELCHIOR
     $porcentagem_pilar = self::calcular_porcentagem_adequacao_por_pilar($request->relatorio_formulario_id);
+    $pilares_lista = ['Pessoas', 'Tecnologia', 'Processos', 'Informação', 'Gestão'];
+    $analise_topicos = [];
+    
+    // DEBUG: Informações básicas
+    Log::info('🔍 Formulario ID:', ['id' => $request->relatorio_formulario_id]);
+    Log::info('🔍 Total respostas:', ['count' => $total_perguntas_respondidas]);
+    
+    foreach ($pilares_lista as $pilar) {
+        $resultado = self::calcular_top_topicos_por_pilar($request->relatorio_formulario_id, $pilar, 4);
+        Log::info("🔍 Pilar {$pilar}:", [
+            'count' => count($resultado), 
+            'dados' => $resultado
+        ]);
+        $analise_topicos[$pilar] = $resultado;
+    }
+    
+    // MOVER O LOG PARA AQUI (DEPOIS DE POPULAR O ARRAY)
+    Log::info('🔍 Final analise_topicos:', $analise_topicos);
     
     return [
         'porcentagem_pilar' => $porcentagem_pilar, 
         'porcentagem_pilar_original' => $porcentagem_pilar_original, 
         'total_pilares' => $total_pilares, 
+        'analise_topicos' => $analise_topicos,
         'respostas' => self::todas_perguntas_respondidas($request->relatorio_formulario_id)
     ];
 }
@@ -434,7 +455,7 @@ class FormularioController extends Controller
         $respostas = DB::table("respostas")
         ->join("perguntas", "respostas.pergunta_id", "=", "perguntas.id")
         ->where('respostas.formulario_id', $formulario_id)
-        ->orderBy('respostas.data_cadastro', 'desc')        
+      //  ->orderBy('respostas.data_cadastro', 'desc')   Belchior - tirei essa linha para poder reordenar nas Nao conformidades.     
         ->get();
         $lista = [];
         $posicao = 1;
@@ -592,5 +613,42 @@ private static function calcular_porcentagem_adequacao_por_pilar($formulario_id)
     }
 
     return $porcentagens;
+}
+
+/**
+ * Calcula os 4 tópicos com maior porcentagem de adequação por pilar
+ * @param int $formulario_id
+ * @param string $pilar
+ * @param int $limit
+ * @return array
+ */
+private static function calcular_top_topicos_por_pilar($formulario_id, $pilar, $limit = 4) {
+    $tematica = Models\Tematica::where('nome', $pilar)->first();
+    if (!$tematica) {
+        return [];
+    }
+    
+    $query = DB::table('respostas as r')
+        ->join('perguntas as p', 'r.pergunta_id', '=', 'p.id')
+        ->join('pergunta_topico as pt', 'p.id', '=', 'pt.pergunta_id')
+        ->join('topicos as t', 'pt.topico_id', '=', 't.id')
+        ->where('r.formulario_id', $formulario_id)
+        ->where('p.tematica_id', $tematica->id)
+        ->where('t.ativo', true) // Apenas tópicos ativos
+        ->select(
+            't.nome as topico_nome', 
+            't.id as topico_id',
+            DB::raw('COUNT(*) as total_respostas'),
+            DB::raw('SUM(CASE WHEN r.nivel_adequacao = 1 THEN 1 ELSE 0 END) as adequadas'),
+            DB::raw('ROUND((SUM(CASE WHEN r.nivel_adequacao = 1 THEN 1 ELSE 0 END) / COUNT(*)) * 100, 1) as porcentagem')
+        )
+        ->groupBy('t.id', 't.nome')
+        ->having('total_respostas', '>=', 1)
+        ->orderBy('porcentagem', 'DESC')
+        ->orderBy('t.nome', 'ASC') // Critério de desempate
+        ->limit($limit)
+        ->get();
+        
+    return $query->toArray();
 }
 }
