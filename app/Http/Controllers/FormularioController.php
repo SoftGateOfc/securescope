@@ -645,7 +645,7 @@ private static function calcular_top_topicos_por_pilar($formulario_id, $pilar, $
         ->groupBy('t.id', 't.nome')
         ->having('total_respostas', '>=', 1)
         ->orderBy('porcentagem', 'DESC')
-        ->orderBy('t.nome', 'ASC') // Critério de desempate
+        ->orderBy('t.nome', 'ASC') 
         ->limit($limit)
         ->get();
         
