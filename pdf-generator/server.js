@@ -74,8 +74,6 @@ function carregarImagensEstaticas(dados) {
         processos: ["processos.jpg", "processos.jpeg", "processos.png"],
     };
 
-    console.log("🔍 Carregando imagens estáticas...");
-
     // Para cada imagem definida, tentar carregar
     for (const [nomeImagem, possiveisNomes] of Object.entries(
         imagensEstaticas
@@ -106,42 +104,21 @@ function carregarImagensEstaticas(dados) {
     return dados;
 }
 
-// === FUNÇÃO ATUALIZADA ===
 app.post("/generate-pdf", async (req, res) => {
     try {
         console.log("📨 Recebendo dados para PDF...");
 
         const dados = req.body;
 
-        // CARREGAR IMAGENS (manter igual)
         carregarImagensEstaticas(dados);
 
-        // CALCULAR PÁGINAS (manter igual)
         const numeroPaginas = calcularPaginasSumario(
             dados.dados,
             dados.dados_modelo
         );
 
-        // === 🔥 PROCESSAR NÃO CONFORMIDADES ===
-        console.log("📋 Processando não conformidades...");
-
         // Verificar se existem respostas nos dados
         const respostas = dados.dados_modelo?.respostas || [];
-        console.log(`📊 Total de respostas recebidas: ${respostas.length}`);
-
-        if (respostas.length > 0) {
-            // Log das primeiras respostas para debug
-            console.log("📋 Estrutura da primeira resposta:", {
-                pilar: respostas[0].pilar,
-                vulnerabilidade: respostas[0].vulnerabilidade,
-                topicos: respostas[0].topicos,
-                criticidade: respostas[0].criticidade,
-                recomendacao: respostas[0].recomendacao
-                    ? "✅ Tem"
-                    : "❌ Não tem", // ← ADICIONADO
-                prioridade: respostas[0].prioridade, // ← ADICIONADO
-            });
-        }
 
         // Processar não conformidades
         const dadosLista = processarNaoConformidadesParaRelatorio({
@@ -149,31 +126,12 @@ app.post("/generate-pdf", async (req, res) => {
             numeroPaginas,
         });
 
-        // Log do resultado das não conformidades
-        console.log(`📋 Resultado das não conformidades:`);
-        console.log(`   - Tem lista: ${dadosLista.temLista}`);
-        console.log(`   - Tipo: ${dadosLista.tipoLista}`);
-        console.log(`   - Total itens: ${dadosLista.totalItens}`);
-        console.log(`   - Total páginas: ${dadosLista.totalPaginas}`);
-
-        console.log("💡 Processando recomendações...");
-
         // Processar recomendações
         const dadosListaRecomendacoes = processarRecomendacoesParaRelatorio({
             ...dados,
             numeroPaginas,
         });
 
-        // Log do resultado das recomendações
-        console.log(`💡 Resultado das recomendações:`);
-        console.log(`   - Tem lista: ${dadosListaRecomendacoes.temLista}`);
-        console.log(`   - Tipo: ${dadosListaRecomendacoes.tipoLista}`);
-        console.log(`   - Total itens: ${dadosListaRecomendacoes.totalItens}`);
-        console.log(
-            `   - Total páginas: ${dadosListaRecomendacoes.totalPaginas}`
-        );
-
-        // PREPARAR DADOS COMPLETOS
         const dadosProcessados = {
             ...dados,
             numeroPaginas,
@@ -182,32 +140,6 @@ app.post("/generate-pdf", async (req, res) => {
             dataGeracao: moment().format("DD/MM/YYYY HH:mm:ss"),
             timestamp: Date.now(),
         };
-
-        console.log("🎨 Renderizando template EJS...");
-
-        console.log("🔍 Verificando estrutura das variáveis:");
-        console.log("   dadosLista:", !!dadosProcessados.dadosLista);
-        console.log(
-            "   dadosListaRecomendacoes:",
-            !!dadosProcessados.dadosListaRecomendacoes
-        );
-        console.log(
-            "   imagens disponíveis:",
-            Object.keys(dadosProcessados.imagens || {})
-        );
-
-        if (
-            dadosProcessados.dadosListaRecomendacoes?.paginasLista?.[0]
-                ?.itens?.[0]
-        ) {
-            console.log(
-                "   Estrutura do primeiro item de recomendação:",
-                Object.keys(
-                    dadosProcessados.dadosListaRecomendacoes.paginasLista[0]
-                        .itens[0]
-                )
-            );
-        }
 
         // RENDERIZAR TEMPLATE (igual)
         const html = await ejs.renderFile(
@@ -250,7 +182,6 @@ app.post("/generate-pdf", async (req, res) => {
 
         console.log("✅ PDF gerado com sucesso!");
 
-        // ===  LOG FINAL ATUALIZADO ===
         if (dadosLista.temLista) {
             console.log(
                 `📋 Não conformidades incluídas: ${dadosLista.totalItens} itens em ${dadosLista.totalPaginas} páginas`
@@ -267,7 +198,6 @@ app.post("/generate-pdf", async (req, res) => {
             console.log("💡 Nenhuma recomendação encontrada");
         }
 
-        // RESPOSTA
         res.set({
             "Content-Type": "application/pdf",
             "Content-Disposition": 'inline; filename="relatorio.pdf"',
@@ -284,9 +214,10 @@ app.post("/generate-pdf", async (req, res) => {
     }
 });
 
-// Iniciar servidor
-app.listen(PORT, () => {
-    console.log(`🚀 PDF Generator rodando em http://localhost:${PORT}`);
+const HOST = process.env.HOST || "0.0.0.0";
+
+app.listen(PORT, HOST, () => {
+    console.log(`🚀 PDF Generator rodando em http://${HOST}:${PORT}`);
 });
 
 module.exports = app;

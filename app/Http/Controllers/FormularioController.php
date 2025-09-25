@@ -352,47 +352,33 @@ class FormularioController extends Controller
     ];
 
     // TENTAR ENVIAR PARA NODE.JS
-    try {
-        Log::info('🚀 Tentando gerar PDF via Node.js', [
-            'servidor' => 'http://localhost:3001/generate-pdf',
-            'dados_empresa' => $request->nome_empresa
-        ]);
-        
-        $response = Http::timeout(30)->post('http://localhost:3001/generate-pdf', $dados_para_nodejs);
+    try { 
+     $response = Http::timeout(env('PDF_TIMEOUT', 40))->post(env('PDF_SERVER_URL'), $dados_para_nodejs);
         
         if ($response->successful()) {
-            Log::info('✅ PDF gerado com sucesso via Node.js');
             
             return response($response->body(), 200, [
                 'Content-Type' => 'application/pdf',
                 'Content-Disposition' => 'inline; filename="relatorio-'.date('Y-m-d-H-i-s').'.pdf"',
             ]);
         } else {
-            Log::error('❌ Erro no servidor Node.js', [
-                'status' => $response->status(),
+             Log::error('❌ Erro no servidor Node.js', [
+             'status' => $response->status(),
                 'response' => $response->body()
-            ]);
-            throw new Exception('Servidor PDF retornou erro: ' . $response->status());
-        }
-        
-    } catch (Exception $e) {
-        // FALLBACK: USAR MÉTODO ANTIGO
-        Log::error('⚠️ Fallback para método antigo: ' . $e->getMessage());
-        
-        // Se Node.js falhar, usar o método original
-        $dados = [
-            'dados' => $request,
-            'dados_modelo' => $dados_modelo,            
-            'imagens' => [
-                'logo_empresa' => Arquivo::converter_imagem_base_64($request, 'logo_empresa'),
-                'logo_cliente' => Arquivo::converter_imagem_base_64($request, 'logo_cliente'),                
-                'imagem_area' => $request->hasFile('imagem_area') ? 
-                    Arquivo::converter_imagem_base_64($request, 'imagem_area') : null,
-            ]            
-        ];        
-        return view('formularios.modelos_de_relatorio.modelo1', $dados);
+                ]);
+        throw new Exception('Servidor PDF retornou erro: ' . $response->status());
+                }
+
+        } catch (Exception $e) {
+            Log::error('⚠️ Falha ao gerar PDF: ' . $e->getMessage());
+            
+            return response()->json([
+                'error' => 'Não foi possível gerar o relatório PDF',
+                'message' => 'Tente novamente em alguns minutos'
+            ], 500);
+         }
     }
-}
+
 
     private static function modelo1($request){
     $total_perguntas_respondidas = Models\Resposta::where("formulario_id", $request->relatorio_formulario_id)->count();        
@@ -429,8 +415,6 @@ class FormularioController extends Controller
         $analise_topicos[$pilar] = $resultado;
     }
     
-    // MOVER O LOG PARA AQUI (DEPOIS DE POPULAR O ARRAY)
-    Log::info('🔍 Final analise_topicos:', $analise_topicos);
     
     return [
         'porcentagem_pilar' => $porcentagem_pilar, 
@@ -577,6 +561,7 @@ private static function processarCampoTexto($texto) {
 /**
  * Calcula a porcentagem de adequação por pilar
  * Fórmula: (Perguntas com nivel_adequacao = 1) / (Total de perguntas do pilar) × 100
+ * o anterior calculava de forma errada o que era pedido pro Resumo Executivo.
  * 
  * @param int $formulario_id
  * @return array
@@ -645,7 +630,7 @@ private static function calcular_top_topicos_por_pilar($formulario_id, $pilar, $
         ->groupBy('t.id', 't.nome')
         ->having('total_respostas', '>=', 1)
         ->orderBy('porcentagem', 'DESC')
-        ->orderBy('t.nome', 'ASC') 
+        ->orderBy('t.nome', 'ASC') // Critério de desempate
         ->limit($limit)
         ->get();
         
