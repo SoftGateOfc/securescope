@@ -286,7 +286,8 @@ class FormularioController extends Controller
         ->find($usuario_id);
     }
 
-    public function relatorio_personalizado(Request $request){        
+   public function relatorio_personalizado(Request $request) {
+    //  VALIDAÇÃO - MANTENHA COMO ESTÁ
     $request->validate([
         'relatorio_formulario_id' => 'required',
         'nome_empresa' => 'required|max:255',
@@ -304,12 +305,12 @@ class FormularioController extends Controller
         'max' => 'O campo :attribute deve ter no máximo :max caracteres.',
         'logo_empresa.file' => 'Você precisa enviar o arquivo da logo da empresa.',
         'logo_cliente.file' => 'Você precisa enviar o arquivo da logo do cliente.',
-        'imagem_area.file' => 'Você precisa enviar o arquivo da localização da análise.',
     ]);
 
-    // PREPARAR DADOS PARA O NODE.JS BELCHIOR
+    // ✅ PREPARAR DADOS - MANTENHA COMO ESTÁ
     $dados_modelo = self::modelo1($request);
     $referencias_proximas_array = self::processarCampoTexto($request->referencias_proximas);
+    
     $dados_para_nodejs = [
         'dados' => [
             'nome_empresa' => $request->nome_empresa,
@@ -319,9 +320,7 @@ class FormularioController extends Controller
             'localizacao_analise' => $request->localizacao_analise,
             'referencias_proximas' => $request->referencias_proximas,
             'panorama' => $request->panorama,
-
-            //pra separar com virgulas no pdf
-             'referencias_proximas_lista' => $referencias_proximas_array,
+            'referencias_proximas_lista' => $referencias_proximas_array,
         ],
         'dados_modelo' => [
             'total_perguntas_respondidas' => Models\Resposta::where("formulario_id", $request->relatorio_formulario_id)->count(),
@@ -333,16 +332,12 @@ class FormularioController extends Controller
                 'Gestão' => self::total_perguntas_respondidas_pilar($request->relatorio_formulario_id, 'Gestão'),
             ],
             'porcentagem_pilar' => $dados_modelo['porcentagem_pilar'] ?? [
-                'Pessoas' => 0,
-                'Tecnologia' => 0,
-                'Processos' => 0,
-                'Informação' => 0,
-                'Gestão' => 0,
+                'Pessoas' => 0, 'Tecnologia' => 0, 'Processos' => 0,
+                'Informação' => 0, 'Gestão' => 0,
             ],
-             'respostas' => $dados_modelo['respostas'] ?? [],
+            'respostas' => $dados_modelo['respostas'] ?? [],
             'analise_topicos' => $dados_modelo['analise_topicos'] ?? []
         ],
-        
         'imagens' => [
             'logo_empresa' => Arquivo::converter_imagem_base_64($request, 'logo_empresa'),
             'logo_cliente' => Arquivo::converter_imagem_base_64($request, 'logo_cliente'),
@@ -351,34 +346,50 @@ class FormularioController extends Controller
         ]
     ];
 
-    // TENTAR ENVIAR PARA NODE.JS
-    try { 
-     $response = Http::timeout(env('PDF_TIMEOUT', 40))->post(env('PDF_SERVER_URL'), $dados_para_nodejs);
+    //  NOVO CÓDIGO COMEÇA AQUI
+    try {
+        // 1️⃣ GERAR APENAS O PDF
+        Log::info('📄 Gerando PDF...');
         
-        if ($response->successful()) {
-            
-            return response($response->body(), 200, [
-                'Content-Type' => 'application/pdf',
-                'Content-Disposition' => 'inline; filename="relatorio-'.date('Y-m-d-H-i-s').'.pdf"',
+        $responsePdf = Http::timeout(env('PDF_TIMEOUT', 40))
+            ->post(env('PDF_SERVER_URL'), $dados_para_nodejs);
+        
+        if (!$responsePdf->successful()) {
+            Log::error('❌ Erro ao gerar PDF', [
+                'status' => $responsePdf->status(),
+                'response' => $responsePdf->body()
             ]);
-        } else {
-             Log::error('❌ Erro no servidor Node.js', [
-             'status' => $response->status(),
-                'response' => $response->body()
-                ]);
-        throw new Exception('Servidor PDF retornou erro: ' . $response->status());
-                }
-
-        } catch (Exception $e) {
-            Log::error('⚠️ Falha ao gerar PDF: ' . $e->getMessage());
-            
-            return response()->json([
-                'error' => 'Não foi possível gerar o relatório PDF',
-                'message' => 'Tente novamente em alguns minutos'
-            ], 500);
-         }
+            throw new Exception('Erro ao gerar PDF: ' . $responsePdf->status());
+        }
+        
+        Log::info('✅ PDF gerado com sucesso!');
+        
+        // 2️⃣ GUARDAR DADOS NA SESSÃO PARA GERAR PPTX DEPOIS
+        $formularioId = $request->relatorio_formulario_id;
+        $timestamp = time();
+        $sessionKey = "pptx_data_{$formularioId}_{$timestamp}";
+        
+        session([$sessionKey => $dados_para_nodejs]);
+        
+        Log::info('💾 Dados salvos na sessão', ['key' => $sessionKey]);
+        
+        // 3️⃣ RETORNAR PDF COM HEADERS ESPECIAIS (JavaScript vai ler)
+        return response($responsePdf->body(), 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'inline; filename="relatorio-'.date('Y-m-d-H-i-s').'.pdf"',
+            'X-Formulario-Id' => $formularioId,  // ← JavaScript vai pegar isso
+            'X-Timestamp' => $timestamp,          // ← JavaScript vai pegar isso
+        ]);
+        
+    } catch (Exception $e) {
+        Log::error('⚠️ Erro ao gerar relatório: ' . $e->getMessage());
+        
+        return response()->json([
+            'error' => 'Não foi possível gerar o relatório PDF',
+            'message' => $e->getMessage()
+        ], 500);
     }
-
+}
 
     private static function modelo1($request){
     $total_perguntas_respondidas = Models\Resposta::where("formulario_id", $request->relatorio_formulario_id)->count();        
@@ -445,16 +456,33 @@ class FormularioController extends Controller
         $posicao = 1;
         foreach($respostas as $resposta){
             $nome_pilar = self::escolher_imagem_pilar(array_search($resposta->tematica_id, $lista_pilares));
+
+            $pergunta = Models\Pergunta::find($resposta->pergunta_id);
+            $titulo_pergunta = $pergunta ? $pergunta->titulo : 'Sem título';
+
+              $foto_base64 = null;
+            if ($resposta->arquivo_id) {
+                $arquivo = Models\Arquivo::find($resposta->arquivo_id);
+            if ($arquivo && file_exists($arquivo->caminho)) {
+                // Converter imagem para base64
+                $imagem_conteudo = file_get_contents($arquivo->caminho);
+                $tipo_mime = mime_content_type($arquivo->caminho);
+                $foto_base64 = 'data:' . $tipo_mime . ';base64,' . base64_encode($imagem_conteudo);
+            }
+                }
             $l = [
                 'pilar' => $nome_pilar,
                 'nc' => $posicao,
                 'vulnerabilidade' => $resposta->nivel_adequacao,
                 'nao_conformidade' => self::classificar_vulnerabilidade($resposta->nivel_adequacao),
                 'topicos' => self::pegar_topicos_pergunta($resposta->pergunta_id),
+                'titulo_pergunta' => $titulo_pergunta,
                 'criticidade' => self::classificar_risco($resposta->nivel_probabilidade,$resposta->nivel_impacto),
                 'recomendacao' => $resposta->resposta,
                 'prioridade' => self::classificar_prioridade($resposta->nivel_esforco, $resposta->nivel_valor),
-                'risco' => $resposta->esta_em_risco_altissimo
+                'risco' => $resposta->esta_em_risco_altissimo,
+                'arquivo_id' => $resposta->arquivo_id,       
+                'foto_base64' => $foto_base64    
             ];
             $lista[] = $l;
             $posicao++;            
@@ -585,15 +613,27 @@ private static function calcular_porcentagem_adequacao_por_pilar($formulario_id)
         'Pessoas' => 0,
         'Tecnologia' => 0,
         'Processos' => 0,
-        'Informação' => 0,
-        'Gestão' => 0,
+        'Informacao' => 0,
+        'Gestao' => 0,
+    ];
+    //mudando isso pois no python nao aceita acentos
+ $mapaTematicas = [
+        'Pessoas' => 'Pessoas',
+        'Tecnologia' => 'Tecnologia',
+        'Processos' => 'Processos',
+        'Informação' => 'Informacao',
+        'Gestão' => 'Gestao',
     ];
 
-    // Calcular porcentagem para cada pilar que tem dados
     foreach ($resultados as $resultado) {
         if ($resultado->total_respostas > 0) {
             $porcentagem = ($resultado->respostas_adequadas / $resultado->total_respostas) * 100;
-            $porcentagens[$resultado->tematica_nome] = round($porcentagem, 1);
+
+            $chave = $mapaTematicas[$resultado->tematica_nome] ?? null;
+
+            if ($chave) {
+                $porcentagens[$chave] = round($porcentagem, 1);
+            }
         }
     }
 
@@ -625,15 +665,145 @@ private static function calcular_top_topicos_por_pilar($formulario_id, $pilar, $
             't.id as topico_id',
             DB::raw('COUNT(*) as total_respostas'),
             DB::raw('SUM(CASE WHEN r.nivel_adequacao = 1 THEN 1 ELSE 0 END) as adequadas'),
+            DB::raw('CONCAT(
+                SUM(CASE WHEN r.nivel_adequacao = 1 THEN 1 ELSE 0 END),
+                "/",
+                COUNT(*)
+            ) as fracao'),
             DB::raw('ROUND((SUM(CASE WHEN r.nivel_adequacao = 1 THEN 1 ELSE 0 END) / COUNT(*)) * 100, 1) as porcentagem')
         )
         ->groupBy('t.id', 't.nome')
         ->having('total_respostas', '>=', 1)
         ->orderBy('porcentagem', 'DESC')
-        ->orderBy('t.nome', 'ASC') // Critério de desempate
+        ->orderBy('t.nome', 'ASC') 
         ->limit($limit)
         ->get();
         
     return $query->toArray();
 }
+
+public function gerar_pptx_isolado(Request $request) 
+{
+    Log::info('🎯 Iniciando geração do PPTX');
+    
+    try {
+        
+        $request->validate([
+            'relatorio_formulario_id' => 'required',
+            'nome_empresa' => 'required|max:255',
+            'nome_cliente' => 'required|max:255',
+            'objetivo' => 'required|max:500',
+            'observacoes' => 'required|max:500',
+            'localizacao_analise' => 'required|max:255',
+            'referencias_proximas' => 'required|max:255',
+            'panorama' => 'required|max:255',
+            'logo_empresa' => 'required|file',
+            'logo_cliente' => 'required|file',
+        ]);
+
+        Log::info('✅ Validação concluída');
+
+        
+        $dados_modelo = self::modelo1($request);
+        $referencias_proximas_array = self::processarCampoTexto($request->referencias_proximas);
+
+        
+        $mapaPilares = [
+            'Pessoas' => 'Pessoas',
+            'Tecnologia' => 'Tecnologia',
+            'Processos' => 'Processos',
+            'Informação' => 'Informacao',
+            'Gestão' => 'Gestao',
+        ];
+
+        $analise_topicos_normalizado = [];
+        foreach (($dados_modelo['analise_topicos'] ?? []) as $pilar => $topicos) {
+            $chavePython = $mapaPilares[$pilar] ?? $pilar;
+            $analise_topicos_normalizado[$chavePython] = $topicos;
+        }
+
+        $dados_para_nodejs = [
+            'dados' => [
+                'nome_empresa' => $request->nome_empresa,
+                'nome_cliente' => $request->nome_cliente,
+                'objetivo' => $request->objetivo,
+                'observacoes' => $request->observacoes,
+                'localizacao_analise' => $request->localizacao_analise,
+                'referencias_proximas' => $request->referencias_proximas,
+                'panorama' => $request->panorama,
+                'referencias_proximas_lista' => $referencias_proximas_array,
+            ],
+            'dados_modelo' => [
+                'total_perguntas_respondidas' => Models\Resposta::where("formulario_id", $request->relatorio_formulario_id)->count(),
+                'total_pilares' => [
+                    'Pessoas' => self::total_perguntas_respondidas_pilar($request->relatorio_formulario_id, 'Pessoas'),
+                    'Tecnologia' => self::total_perguntas_respondidas_pilar($request->relatorio_formulario_id, 'Tecnologia'),
+                    'Processos' => self::total_perguntas_respondidas_pilar($request->relatorio_formulario_id, 'Processos'),
+                    'Informação' => self::total_perguntas_respondidas_pilar($request->relatorio_formulario_id, 'Informação'),
+                    'Gestão' => self::total_perguntas_respondidas_pilar($request->relatorio_formulario_id, 'Gestão'),
+                ],
+                'porcentagem_pilar' => $dados_modelo['porcentagem_pilar'] ?? [
+                    'Pessoas' => 0, 'Tecnologia' => 0, 'Processos' => 0,
+                    'Informação' => 0, 'Gestão' => 0,
+                ],
+                'respostas' => $dados_modelo['respostas'] ?? [],
+                'analise_topicos' => $analise_topicos_normalizado
+            ],
+            'imagens' => [
+                'logo_empresa' => Arquivo::converter_imagem_base_64($request, 'logo_empresa'),
+                'logo_cliente' => Arquivo::converter_imagem_base_64($request, 'logo_cliente'),
+                'imagem_area' => $request->hasFile('imagem_area') ? 
+                    Arquivo::converter_imagem_base_64($request, 'imagem_area') : null,
+            ]
+        ];
+
+        Log::info('📊 Dados preparados para PPTX');
+
+        Log::info('📤 Enviando dados para servidor PPTX');
+        
+       $responsePptx = Http::timeout(env('PPTX_TIMEOUT', 60))
+    ->withHeaders([
+        'Content-Type' => 'application/json; charset=UTF-8',
+        'Accept' => 'application/json',
+    ])
+    ->post(env('PPTX_SERVER_URL'), $dados_para_nodejs);
+        
+        if (!$responsePptx->successful()) {
+            Log::error('❌ Erro ao gerar PPTX', [
+                'status' => $responsePptx->status(),
+                'response' => $responsePptx->body()
+            ]);
+            throw new Exception('Erro ao gerar PPTX: ' . $responsePptx->status());
+        }
+        
+        Log::info('✅ PPTX gerado com sucesso!');
+
+        $formularioId = $request->relatorio_formulario_id;
+        $timestamp = now()->format('YmdHis');
+        $filename = "relatorio-form-{$formularioId}-{$timestamp}.pptx";
+        
+        Log::info('💾 Enviando PPTX para download: ' . $filename);
+        
+        return response($responsePptx->body(), 200, [
+            'Content-Type' => 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+            'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+        ]);
+        
+    } catch (\Illuminate\Validation\ValidationException $e) {
+        Log::error('❌ Erro de validação: ' . json_encode($e->errors()));
+        return response()->json([
+            'error' => 'Dados inválidos',
+            'messages' => $e->errors()
+        ], 422);
+        
+    } catch (Exception $e) {
+        Log::error('⚠️ Erro ao gerar PPTX: ' . $e->getMessage());
+        
+        return response()->json([
+            'error' => 'Não foi possível gerar o relatório PPTX',
+            'message' => $e->getMessage()
+        ], 500);
+    }
+}
+
 }

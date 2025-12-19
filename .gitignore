@@ -24,3 +24,5 @@ yarn-error.log
 # Pasta pdf-generator
 pdf-generator/node_modules/
 pdf-generator/package-lock.json
+pptx-generator/node_modules/
+pptx-generator/package-lock.json

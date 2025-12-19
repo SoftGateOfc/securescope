@@ -143,9 +143,9 @@ Route::middleware(['auth'])->group(function() {
         Route::prefix('formularios')->group(function(){            
             Route::get('/', 'index');
             Route::get('interagir/{id}', 'interagir');
-            //NOVA REGRA DE NEGOCIO
             Route::get('formulario/{id}', 'formulario');
             Route::post('relatorio_personalizado', 'relatorio_personalizado');
+            Route::post('gerar-pptx', 'gerar_pptx_isolado');
             Route::post('responder_pergunta', 'responder_pergunta');
 
             Route::post('registrar_perguntas_em_espera/{id}', 'registrar_perguntas_em_espera');
