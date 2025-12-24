@@ -57,7 +57,7 @@ def gerar_seguranca(pres, dados):
     para_cinza.line.fill.background()
 
     tf_cinza = para_cinza.text_frame
-    tf_cinza.text = "SEGURANÇA PUBLICA"  
+    tf_cinza.text = "SEGURANÇA PÚBLICA"  
     tf_cinza.vertical_anchor = MSO_ANCHOR.MIDDLE
     tf_cinza.margin_left = Inches(0.2)
     p_cinza = tf_cinza.paragraphs[0]
@@ -66,6 +66,16 @@ def gerar_seguranca(pres, dados):
     p_cinza.font.size = Pt(14)
     p_cinza.font.bold = True
     p_cinza.font.color.rgb = RGBColor(255, 255, 255)
+
+    subtitulo = slide.shapes.add_textbox(
+        Inches(2.5), Inches(0.75), Inches(5.0), Inches(0.55)
+    )
+    p = subtitulo.text_frame.paragraphs[0]
+    p.text = "Painel livre para configuração e personalização pelo usuário sobre Segurança Pública"
+    p.font.size = Pt(15)
+    p.font.bold = True
+    p.font.color.rgb = RGBColor(0, 38, 77)
+    p.alignment = PP_ALIGN.CENTER
 
     # === IMAGEM SEGURANÇA PÚBLICA === #
     current_dir = os.path.dirname(__file__)

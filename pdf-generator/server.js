@@ -19,7 +19,6 @@ const {
     processarRecomendacoesParaRelatorio,
 } = require("./utils/lista-paginada");
 
-// Middleware
 app.use(express.json({ limit: "50mb" }));
 app.use(express.static("assets"));
 
@@ -36,7 +35,6 @@ app.get("/", (req, res) => {
     });
 });
 
-// Função para converter imagem para base64
 function imageToBase64(imagePath) {
     try {
         if (fs.existsSync(imagePath)) {
@@ -53,7 +51,7 @@ function imageToBase64(imagePath) {
         }
         return null;
     } catch (error) {
-        console.error("❌ Erro ao converter imagem:", error);
+        console.error(" Erro ao converter imagem:", error);
         return null;
     }
 }
@@ -106,7 +104,6 @@ function carregarImagensEstaticas(dados) {
 
 app.post("/generate-pdf", async (req, res) => {
     try {
-        console.log("📨 Recebendo dados para PDF...");
 
         const dados = req.body;
 
@@ -147,8 +144,6 @@ app.post("/generate-pdf", async (req, res) => {
             dadosProcessados
         );
 
-        console.log("📄 Gerando PDF com Puppeteer...");
-
         // GERAR PDF
         const browser = await puppeteer.launch({
             headless: "new",
@@ -182,22 +177,6 @@ app.post("/generate-pdf", async (req, res) => {
 
         console.log("✅ PDF gerado com sucesso!");
 
-        if (dadosLista.temLista) {
-            console.log(
-                `📋 Não conformidades incluídas: ${dadosLista.totalItens} itens em ${dadosLista.totalPaginas} páginas`
-            );
-        } else {
-            console.log("📋 Nenhuma não conformidade encontrada");
-        }
-
-        if (dadosListaRecomendacoes.temLista) {
-            console.log(
-                `💡 Recomendações incluídas: ${dadosListaRecomendacoes.totalItens} itens em ${dadosListaRecomendacoes.totalPaginas} páginas`
-            );
-        } else {
-            console.log("💡 Nenhuma recomendação encontrada");
-        }
-
         res.set({
             "Content-Type": "application/pdf",
             "Content-Disposition": 'inline; filename="relatorio.pdf"',
@@ -217,7 +196,6 @@ app.post("/generate-pdf", async (req, res) => {
 const HOST = process.env.HOST || "0.0.0.0";
 
 app.listen(PORT, HOST, () => {
-    console.log(`🚀 PDF Generator rodando em http://${HOST}:${PORT}`);
 });
 
 module.exports = app;

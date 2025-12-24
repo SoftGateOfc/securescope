@@ -701,8 +701,6 @@ public function gerar_pptx_isolado(Request $request)
             'logo_cliente' => 'required|file',
         ]);
 
-        Log::info('✅ Validação concluída');
-
         
         $dados_modelo = self::modelo1($request);
         $referencias_proximas_array = self::processarCampoTexto($request->referencias_proximas);
@@ -756,10 +754,6 @@ public function gerar_pptx_isolado(Request $request)
                     Arquivo::converter_imagem_base_64($request, 'imagem_area') : null,
             ]
         ];
-
-        Log::info('📊 Dados preparados para PPTX');
-
-        Log::info('📤 Enviando dados para servidor PPTX');
         
        $responsePptx = Http::timeout(env('PPTX_TIMEOUT', 60))
     ->withHeaders([
@@ -776,13 +770,11 @@ public function gerar_pptx_isolado(Request $request)
             throw new Exception('Erro ao gerar PPTX: ' . $responsePptx->status());
         }
         
-        Log::info('✅ PPTX gerado com sucesso!');
 
         $formularioId = $request->relatorio_formulario_id;
         $timestamp = now()->format('YmdHis');
         $filename = "relatorio-form-{$formularioId}-{$timestamp}.pptx";
         
-        Log::info('💾 Enviando PPTX para download: ' . $filename);
         
         return response($responsePptx->body(), 200, [
             'Content-Type' => 'application/vnd.openxmlformats-officedocument.presentationml.presentation',

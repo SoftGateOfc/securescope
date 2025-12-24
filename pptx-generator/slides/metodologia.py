@@ -193,16 +193,16 @@ def gerar_metodologia(pres, dados):
     # === IMAGEM DOS 5 PILARES (Arte_metodologia.png) === #
     current_dir = os.path.dirname(__file__)  # pptx-generator/slides/
     parent_dir = os.path.dirname(current_dir)  # pptx-generator/
-    image_path = os.path.join(parent_dir, "images", "Arte_metodologia.png")
+    image_path = os.path.join(parent_dir, "images", "metodologia1.png")
     
     # Adicionar imagem no centro-direita do slide (maior e mais acima)
     add_local_image(
         slide, 
         image_path, 
-        left=4.5,      # Posição à direita
-        top=0.2,       # posiçao à abaixo
-        width=5.3,     # Largura 
-        height=4.8     # Altura
+        left=5.0,      # Posição à direita
+        top=0.5,       # posiçao à abaixo
+        width=4.4,     # Largura 
+        height=4.6    # Altura
     )
     
     # === TEXTOS DOS 5 PILARES === #
@@ -213,7 +213,7 @@ def gerar_metodologia(pres, dados):
         "TECNOLOGIA",
         "Controle de acesso, Barreiras físicas, Iluminação, CFTV, Comunicação",
         left=7.5,
-        top=0.2,
+        top=0.3,
         width=2.0,
         align=PP_ALIGN.LEFT,
         cor_titulo=(0, 51, 102)
@@ -260,7 +260,7 @@ def gerar_metodologia(pres, dados):
         slide,
         "PESSOAS",
         "Recursos Humanos, Efetivo de segurança e Treinamentos",
-        left=4.3,    # À esquerda do círculo
+        left=4.25,    # À esquerda do círculo
         top=2.2,     # Centralizado verticalmente
         width=1.5,
         align=PP_ALIGN.LEFT,

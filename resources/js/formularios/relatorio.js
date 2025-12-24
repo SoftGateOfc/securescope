@@ -12,12 +12,7 @@ $("#modal_relatorio form").on("submit", function (e) {
     // Coletar todos os dados do formulário (incluindo arquivos)
     const formData = new FormData(this);
 
-    console.log(
-        "📋 PDF será gerado normalmente. PPTX será gerado em paralelo..."
-    );
-
     setTimeout(() => {
-        console.log("📤 Enviando dados para gerar PPTX...");
 
         axios
             .post("/formularios/gerar-pptx", formData, {
@@ -27,8 +22,6 @@ $("#modal_relatorio form").on("submit", function (e) {
                 },
             })
             .then((response) => {
-                console.log("✅ PPTX gerado com sucesso!");
-
                 // Criar blob e fazer download automático
                 const pptxBlob = new Blob([response.data], {
                     type: "application/vnd.openxmlformats-officedocument.presentationml.presentation",
@@ -47,10 +40,9 @@ $("#modal_relatorio form").on("submit", function (e) {
 
                 window.URL.revokeObjectURL(pptxUrl);
 
-                console.log("💾 Download do PPTX iniciado automaticamente!");
             })
             .catch((error) => {
-                console.error("❌ Erro ao gerar PPTX:", error);
+                console.error(" Erro ao gerar PPTX:", error);
 
                 if (error.response) {
                     console.error("Status:", error.response.status);
@@ -58,8 +50,8 @@ $("#modal_relatorio form").on("submit", function (e) {
                 }
 
                 alert(
-                    "⚠️ O PDF foi gerado normalmente, mas houve erro ao gerar o PPTX. Verifique o console."
+                    " Erro ao gerar o Powerpoint. Tente novamente! \nEm caso de persistencia, informe-nos."
                 );
             });
-    }, 3000); // 3 segundos de espera
+    }, 3000); 
 });

@@ -393,6 +393,7 @@ def gerar_sumario(pres, dados):
         "RESUMO EXECUTIVO",
         "ITENS ADERENTES",
         "VULNERABILIDADES",
+        "VULNERABILIDADES ESPECÍFICAS"
         "RECOMENDAÇÕES"
     ]
 
