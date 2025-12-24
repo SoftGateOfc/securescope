@@ -43,8 +43,7 @@ def gerar_seguranca(pres, dados):
     p_azul.alignment = PP_ALIGN.CENTER
     tf_azul.vertical_anchor = MSO_ANCHOR.MIDDLE
 
-    # === PARALELOGRAMO CINZA (SEGURANÇA PÚBLICA) === #
-    # === PARALELOGRAMO CINZA (título) === #
+
     para_cinza = slide.shapes.add_shape(
     MSO_SHAPE.PARALLELOGRAM,
     Inches(0.85),   # Left
