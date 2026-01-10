@@ -8,7 +8,7 @@ dadosListaRecomendacoes.paginasLista.forEach((pagina, indicePagina) => { %>
     tituloSecao: 'RECOMENDAÇÕES' }) %>
 
     <!-- CONTEÚDO -->
-    <div class="px-8 py-6">
+    <div class="px-8 py-6 flex flex-col flex-1">
         <!-- TABELA -->
         <div
             class="bg-white border border-gray-200 rounded-lg overflow-hidden shadow-sm"
@@ -133,71 +133,76 @@ dadosListaRecomendacoes.paginasLista.forEach((pagina, indicePagina) => { %>
             </table>
         </div>
 
+        <div class="flex-grow"></div>
         <!-- INFORMAÇÕES DA PÁGINA -->
-        <div
-            class="mt-4 flex justify-between items-center text-sm text-gray-600"
-        >
-            <span
-                >Página <%= pagina.numeroPagina %> de <%= pagina.totalPaginas %>
-                - Recomendações</span
-            >
-            <span
-                >Itens <%= pagina.indiceInicio %> - <%= pagina.indiceFim %> de
-                <%= pagina.totalItens %></span
-            >
-        </div>
-
-        <!-- LEGENDA -->
-        <div class="mt-6 flex flex-col items-center space-y-4">
-            <!-- LEGENDA DOS PILARES -->
+        <div class="pb-2">
+            
             <div
-                class="border-blue-400 border-2 rounded-lg p-4 flex justify-center w-full"
+                class=" flex justify-between items-center text-sm text-gray-600"
             >
-                <div class="flex gap-6">
-                    <% pils.forEach(p => { %>
-                    <div class="flex items-center gap-1 text-xs">
-                        <img
-                            src="<%= p.imagem %>"
-                            alt="<%= p.chave %>"
-                            class="w-10 h-10 object-contain"
-                        />
-                        <span class="font-semibold"><%= p.chave %></span>
-                    </div>
-                    <% }); %>
-                </div>
+                <span
+                    >Página <%= pagina.numeroPagina %> de <%= pagina.totalPaginas %>
+                    - Recomendações</span
+                >
+                <span
+                    >Itens <%= pagina.indiceInicio %> - <%= pagina.indiceFim %> de
+                    <%= pagina.totalItens %></span
+                >
             </div>
 
-            <!-- LEGENDA DAS PRIORIDADES -->
-            <div
-                class="border-blue-400 border-2 rounded-lg p-4 flex justify-center w-full"
-            >
-                <div class="flex gap-6">
-                    <div class="flex items-center gap-3 text-xs">
-                        <span
-                            class="px-3 py-1 rounded-full text-white font-bold bg-red-600"
-                            >CP</span
-                        >
-                        <span class="text-red-600 font-semibold"
-                            >Curto Prazo</span
-                        >
+            <!-- LEGENDA -->
+        
+            <div class=" mt-4 flex flex-col items-center space-y-4">
+                <!-- LEGENDA DOS PILARES -->
+                <div
+                    class="border-blue-400 border-2 rounded-lg p-4 flex justify-center w-full"
+                >
+                    <div class="flex gap-6">
+                        <% pils.forEach(p => { %>
+                        <div class="flex items-center gap-1 text-xs">
+                            <img
+                                src="<%= p.imagem %>"
+                                alt="<%= p.chave %>"
+                                class="w-10 h-10 object-contain"
+                            />
+                            <span class="font-semibold"><%= p.chave %></span>
+                        </div>
+                        <% }); %>
                     </div>
-                    <div class="flex items-center gap-3 text-xs">
-                        <span
-                            class="px-3 py-1 rounded-full text-white font-bold bg-yellow-500"
-                            >MP</span
-                        >
-                        <span class="text-yellow-500 font-semibold"
-                            >Médio Prazo</span
-                        >
-                    </div>
-                    <div class="flex items-center gap-3 text-xs">
-                        <span
-                            class="px-3 py-1 rounded-full text-white font-bold bg-green-500"
-                            >LP</span
-                        >
-                        <span class="text-green-500 font-semibold"
-                            >Longo Prazo</span
-                        >
+                </div>
+
+                <!-- LEGENDA DAS PRIORIDADES -->
+                <div
+                    class="border-blue-400 border-2 rounded-lg p-4 flex justify-center w-full"
+                >
+                    <div class="flex gap-6">
+                        <div class="flex items-center gap-3 text-xs">
+                            <span
+                                class="px-3 py-1 rounded-full text-white font-bold bg-red-600"
+                                >CP</span
+                            >
+                            <span class="text-red-600 font-semibold"
+                                >Curto Prazo</span
+                            >
+                        </div>
+                        <div class="flex items-center gap-3 text-xs">
+                            <span
+                                class="px-3 py-1 rounded-full text-white font-bold bg-yellow-500"
+                                >MP</span
+                            >
+                            <span class="text-yellow-500 font-semibold"
+                                >Médio Prazo</span
+                            >
+                        </div>
+                        <div class="flex items-center gap-3 text-xs">
+                            <span
+                                class="px-3 py-1 rounded-full text-white font-bold bg-green-500"
+                                >LP</span
+                            >
+                            <span class="text-green-500 font-semibold"
+                                >Longo Prazo</span
+                            >
+                        </div>
                     </div>
                 </div>
             </div>

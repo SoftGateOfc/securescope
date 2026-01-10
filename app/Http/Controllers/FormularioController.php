@@ -287,7 +287,6 @@ class FormularioController extends Controller
     }
 
    public function relatorio_personalizado(Request $request) {
-    //  VALIDAÇÃO - MANTENHA COMO ESTÁ
     $request->validate([
         'relatorio_formulario_id' => 'required',
         'nome_empresa' => 'required|max:255',
@@ -308,7 +307,7 @@ class FormularioController extends Controller
     ]);
 
     // ✅ PREPARAR DADOS - MANTENHA COMO ESTÁ
-    $dados_modelo = self::modelo1($request);
+    $dados_modelo = self::modelo1($request, false);
     $referencias_proximas_array = self::processarCampoTexto($request->referencias_proximas);
     
     $dados_para_nodejs = [
@@ -374,12 +373,17 @@ class FormularioController extends Controller
         Log::info('💾 Dados salvos na sessão', ['key' => $sessionKey]);
         
         // 3️⃣ RETORNAR PDF COM HEADERS ESPECIAIS (JavaScript vai ler)
-        return response($responsePdf->body(), 200, [
-            'Content-Type' => 'application/pdf',
-            'Content-Disposition' => 'inline; filename="relatorio-'.date('Y-m-d-H-i-s').'.pdf"',
-            'X-Formulario-Id' => $formularioId,  // ← JavaScript vai pegar isso
-            'X-Timestamp' => $timestamp,          // ← JavaScript vai pegar isso
-        ]);
+        return response()->streamDownload(
+            function () use ($responsePdf) {
+                echo $responsePdf->body();
+            },
+            'relatorio-' . date('Y-m-d-H-i-s') . '.pdf',
+            [
+                'Content-Type'   => 'application/pdf',
+                'X-Formulario-Id' => $formularioId,  // JS continua pegando
+                'X-Timestamp'    => $timestamp,     // JS continua pegando
+            ]
+        );
         
     } catch (Exception $e) {
         Log::error('⚠️ Erro ao gerar relatório: ' . $e->getMessage());
@@ -391,7 +395,7 @@ class FormularioController extends Controller
     }
 }
 
-    private static function modelo1($request){
+    private static function modelo1($request, $incluir_fotos = true){
     $total_perguntas_respondidas = Models\Resposta::where("formulario_id", $request->relatorio_formulario_id)->count();        
     $total_pilares = [
         'Pessoas' => self::total_perguntas_respondidas_pilar($request->relatorio_formulario_id, 'Pessoas'),
@@ -432,7 +436,7 @@ class FormularioController extends Controller
         'porcentagem_pilar_original' => $porcentagem_pilar_original, 
         'total_pilares' => $total_pilares, 
         'analise_topicos' => $analise_topicos,
-        'respostas' => self::todas_perguntas_respondidas($request->relatorio_formulario_id)
+        'respostas' => self::todas_perguntas_respondidas($request->relatorio_formulario_id, $incluir_fotos)
     ];
 }
 
@@ -445,50 +449,61 @@ class FormularioController extends Controller
         ->where('respostas.formulario_id', $formulario_id)->where('perguntas.tematica_id', $tematica->id)->count();        
     }
 
-    private static function todas_perguntas_respondidas($formulario_id){
-        $lista_pilares = Models\Tematica::pluck('id', 'nome')->toArray();
-        $respostas = DB::table("respostas")
-        ->join("perguntas", "respostas.pergunta_id", "=", "perguntas.id")
-        ->where('respostas.formulario_id', $formulario_id)
-      //  ->orderBy('respostas.data_cadastro', 'desc')   Belchior - tirei essa linha para poder reordenar nas Nao conformidades.     
-        ->get();
-        $lista = [];
-        $posicao = 1;
-        foreach($respostas as $resposta){
-            $nome_pilar = self::escolher_imagem_pilar(array_search($resposta->tematica_id, $lista_pilares));
+    /**
+ * @param int $formulario_id
+ * @param bool $incluir_fotos - Se false, não inclui foto_base64
+ */
+private static function todas_perguntas_respondidas($formulario_id, $incluir_fotos = true){
+    $lista_pilares = Models\Tematica::pluck('id', 'nome')->toArray();
+    $respostas = DB::table("respostas")
+    ->join("perguntas", "respostas.pergunta_id", "=", "perguntas.id")
+    ->where('respostas.formulario_id', $formulario_id)
+    ->get();
+    
+    $lista = [];
+    $posicao = 1;
+    
+    foreach($respostas as $resposta){
+        $nome_pilar = self::escolher_imagem_pilar(array_search($resposta->tematica_id, $lista_pilares));
+        $pergunta = Models\Pergunta::find($resposta->pergunta_id);
+        $titulo_pergunta = $pergunta ? $pergunta->titulo : 'Sem título';
 
-            $pergunta = Models\Pergunta::find($resposta->pergunta_id);
-            $titulo_pergunta = $pergunta ? $pergunta->titulo : 'Sem título';
-
-              $foto_base64 = null;
-            if ($resposta->arquivo_id) {
-                $arquivo = Models\Arquivo::find($resposta->arquivo_id);
+        $foto_base64 = null;
+        
+        // ✅ SÓ PROCESSA FOTOS SE $incluir_fotos = true
+        if ($incluir_fotos && $resposta->arquivo_id) {
+            $arquivo = Models\Arquivo::find($resposta->arquivo_id);
             if ($arquivo && file_exists($arquivo->caminho)) {
-                // Converter imagem para base64
                 $imagem_conteudo = file_get_contents($arquivo->caminho);
                 $tipo_mime = mime_content_type($arquivo->caminho);
                 $foto_base64 = 'data:' . $tipo_mime . ';base64,' . base64_encode($imagem_conteudo);
             }
-                }
-            $l = [
-                'pilar' => $nome_pilar,
-                'nc' => $posicao,
-                'vulnerabilidade' => $resposta->nivel_adequacao,
-                'nao_conformidade' => self::classificar_vulnerabilidade($resposta->nivel_adequacao),
-                'topicos' => self::pegar_topicos_pergunta($resposta->pergunta_id),
-                'titulo_pergunta' => $titulo_pergunta,
-                'criticidade' => self::classificar_risco($resposta->nivel_probabilidade,$resposta->nivel_impacto),
-                'recomendacao' => $resposta->resposta,
-                'prioridade' => self::classificar_prioridade($resposta->nivel_esforco, $resposta->nivel_valor),
-                'risco' => $resposta->esta_em_risco_altissimo,
-                'arquivo_id' => $resposta->arquivo_id,       
-                'foto_base64' => $foto_base64    
-            ];
-            $lista[] = $l;
-            $posicao++;            
-        }        
-        return $lista;
-    }
+        }
+        
+        $l = [
+            'pilar' => $nome_pilar,
+            'nc' => $posicao,
+            'vulnerabilidade' => $resposta->nivel_adequacao,
+            'nao_conformidade' => self::classificar_vulnerabilidade($resposta->nivel_adequacao),
+            'topicos' => self::pegar_topicos_pergunta($resposta->pergunta_id),
+            'titulo_pergunta' => $titulo_pergunta,
+            'criticidade' => self::classificar_risco($resposta->nivel_probabilidade,$resposta->nivel_impacto),
+            'recomendacao' => $resposta->resposta,
+            'prioridade' => self::classificar_prioridade($resposta->nivel_esforco, $resposta->nivel_valor),
+            'risco' => $resposta->esta_em_risco_altissimo,
+        ];
+        
+        // ✅ SÓ ADICIONA CAMPOS DE FOTO SE $incluir_fotos = true
+        if ($incluir_fotos) {
+            $l['arquivo_id'] = $resposta->arquivo_id;
+            $l['foto_base64'] = $foto_base64;
+        }
+        
+        $lista[] = $l;
+        $posicao++;            
+    }        
+    return $lista;
+}
 
     private static function escolher_imagem_pilar($pilar){
         $imagem = "";
@@ -701,8 +716,10 @@ public function gerar_pptx_isolado(Request $request)
             'logo_cliente' => 'required|file',
         ]);
 
+        Log::info('✅ Validação concluída');
+
         
-        $dados_modelo = self::modelo1($request);
+        $dados_modelo = self::modelo1($request, true);
         $referencias_proximas_array = self::processarCampoTexto($request->referencias_proximas);
 
         
@@ -754,6 +771,10 @@ public function gerar_pptx_isolado(Request $request)
                     Arquivo::converter_imagem_base_64($request, 'imagem_area') : null,
             ]
         ];
+
+        Log::info('📊 Dados preparados para PPTX');
+
+        Log::info('📤 Enviando dados para servidor PPTX');
         
        $responsePptx = Http::timeout(env('PPTX_TIMEOUT', 60))
     ->withHeaders([
@@ -770,11 +791,13 @@ public function gerar_pptx_isolado(Request $request)
             throw new Exception('Erro ao gerar PPTX: ' . $responsePptx->status());
         }
         
+        Log::info('✅ PPTX gerado com sucesso!');
 
         $formularioId = $request->relatorio_formulario_id;
         $timestamp = now()->format('YmdHis');
         $filename = "relatorio-form-{$formularioId}-{$timestamp}.pptx";
         
+        Log::info('💾 Enviando PPTX para download: ' . $filename);
         
         return response($responsePptx->body(), 200, [
             'Content-Type' => 'application/vnd.openxmlformats-officedocument.presentationml.presentation',

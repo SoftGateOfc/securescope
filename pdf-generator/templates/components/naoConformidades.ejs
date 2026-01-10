@@ -8,7 +8,7 @@ dadosLista.paginasLista.forEach((pagina, indicePagina) => { %>
     tituloSecao: 'NÃO CONFORMIDADES - NC' }) %>
 
     <!-- CONTEÚDO -->
-    <div class="px-8 py-6">
+   <div class="px-8 py-6 flex flex-col flex-1">
         <!-- TABELA -->
         <div
             class="bg-white border border-gray-200 rounded-lg overflow-hidden shadow-sm"
@@ -118,10 +118,11 @@ dadosLista.paginasLista.forEach((pagina, indicePagina) => { %>
                 </tbody>
             </table>
         </div>
-
+        <div class="flex-grow"></div>
         <!-- INFORMAÇÕES DA PÁGINA -->
+    <div class="pb-2">
         <div
-            class="mt-4 flex justify-between items-center text-sm text-gray-600"
+            class=" flex justify-between items-center text-sm text-gray-600"
         >
             <span
                 >Página <%= pagina.numeroPagina %> de <%= pagina.totalPaginas %>
@@ -134,45 +135,47 @@ dadosLista.paginasLista.forEach((pagina, indicePagina) => { %>
         </div>
 
         <!-- LEGENDA -->
-        <div class="mt-6 flex flex-col items-center space-y-4">
-            <!-- LEGENDA DOS PILARES -->
-            <div
-                class="border-blue-400 border-2 rounded-lg p-4 flex justify-center w-full"
-            >
-                <div class="flex gap-6">
-                    <% pils.forEach(p => { %>
-                    <div class="flex items-center gap-1 text-xs">
-                        <img
-                            src="<%= p.imagem %>"
-                            alt="<%= p.chave %>"
-                            class="w-10 h-10 object-contain"
-                        />
-                        <span class="font-semibold"><%= p.chave %></span>
+        
+            <div class="mt-4 flex flex-col items-center space-y-4">
+                <!-- LEGENDA DOS PILARES -->
+                <div
+                    class="border-blue-400 border-2 rounded-lg p-4 flex justify-center w-full"
+                >
+                    <div class="flex gap-6">
+                        <% pils.forEach(p => { %>
+                        <div class="flex items-center gap-1 text-xs">
+                            <img
+                                src="<%= p.imagem %>"
+                                alt="<%= p.chave %>"
+                                class="w-10 h-10 object-contain"
+                            />
+                            <span class="font-semibold"><%= p.chave %></span>
+                        </div>
+                        <% }) %>
                     </div>
-                    <% }) %>
                 </div>
-            </div>
 
-            <!-- LEGENDA DAS CORES DE CRITICIDADE -->
-            <div
-                class="border-blue-400 border-2 rounded-lg p-4 flex justify-center w-full"
-            >
-                <div class="flex gap-6">
-                    <% const cores = [ { cor: 'bg-red-500', corTexto:
-                    'text-red-500', nome: 'Crítico' }, { cor: 'bg-orange-500',
-                    corTexto: 'text-orange-500', nome: 'Alto' }, { cor:
-                    'bg-yellow-500', corTexto: 'text-yellow-500', nome: 'Médio'
-                    }, { cor: 'bg-green-700', corTexto: 'text-green-700', nome:
-                    'Baixo' }, { cor: 'bg-green-400', corTexto:
-                    'text-green-400', nome: 'Muito Baixo' } ]; %> <%
-                    cores.forEach(c => { %>
-                    <div class="flex items-center gap-3 text-xs">
-                        <div class="w-5 h-5 rounded-full <%= c.cor %>"></div>
-                        <span class="<%= c.corTexto %> font-semibold"
-                            ><%= c.nome %></span
-                        >
+                <!-- LEGENDA DAS CORES DE CRITICIDADE -->
+                <div
+                    class="border-blue-400 border-2 rounded-lg p-4 flex justify-center w-full"
+                >
+                    <div class="flex gap-6">
+                        <% const cores = [ { cor: 'bg-red-500', corTexto:
+                        'text-red-500', nome: 'Crítico' }, { cor: 'bg-orange-500',
+                        corTexto: 'text-orange-500', nome: 'Alto' }, { cor:
+                        'bg-yellow-500', corTexto: 'text-yellow-500', nome: 'Médio'
+                        }, { cor: 'bg-green-700', corTexto: 'text-green-700', nome:
+                        'Baixo' }, { cor: 'bg-green-400', corTexto:
+                        'text-green-400', nome: 'Muito Baixo' } ]; %> <%
+                        cores.forEach(c => { %>
+                        <div class="flex items-center gap-3 text-xs">
+                            <div class="w-5 h-5 rounded-full <%= c.cor %>"></div>
+                            <span class="<%= c.corTexto %> font-semibold"
+                                ><%= c.nome %></span
+                            >
+                        </div>
+                        <% }) %>
                     </div>
-                    <% }) %>
                 </div>
             </div>
         </div>

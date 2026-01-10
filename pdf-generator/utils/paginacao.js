@@ -1,10 +1,3 @@
-/**
- * Sistema de Paginação Automática para PDFs
- *
- * Calcula automaticamente o número de páginas que cada seção ocupará
- * baseado no conteúdo e configurações de layout
- */
-
 class PaginacaoManager {
     constructor() {
         // Configurações base para cálculo de páginas
@@ -157,7 +150,7 @@ class PaginacaoManager {
         );
 
         // Usar a mesma lógica da lista-paginada: 8 itens por página
-        return Math.ceil(naoConformidades.length / 8);
+        return Math.ceil(naoConformidades.length / 7);
     }
 
     /**
@@ -173,8 +166,8 @@ class PaginacaoManager {
             (r) => r.recomendacao && r.recomendacao.trim() !== ""
         );
 
-        // Usar a mesma lógica da lista-paginada: 8 itens por página
-        return Math.ceil(recomendacoes.length / 8);
+        // Usar a mesma lógica da lista-paginada: 7 itens por página
+        return Math.ceil(recomendacoes.length / 7);
     }
 
     /**

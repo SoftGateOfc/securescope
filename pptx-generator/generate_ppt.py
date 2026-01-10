@@ -41,7 +41,7 @@ def main():
         print("Gerando metodologia...", file=sys.stderr, flush=True) 
         gerar_metodologia(pres, dados)      
 
-        print("Gerando panorama situacional...", file=sys.stderr, flush=True) 
+        print("Gerando panorama situacional...", file=sys.stderr, flush=True)  # ← NOVO
         gerar_panorama_situacional(pres, dados)  
 
         print("Gerando segurança...", file=sys.stderr, flush=True) 

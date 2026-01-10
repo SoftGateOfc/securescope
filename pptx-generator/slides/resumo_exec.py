@@ -178,7 +178,7 @@ def gerar_resumo_exec(pres, dados):
     """Gera o slide de Resumo Executivo (Página 5)"""
     print("Criando slide de Resumo Executivo...", file=sys.stderr)
     slide = pres.slides.add_slide(pres.slide_layouts[6])
-    tracar_linha_horizontal(slide, y=0.85, x_start=3.55, comprimento=1.9, texto_circulo= f"{percentuais.get('Tecnologia', 0)}%",titulo="TECNOLOGIA",
+    tracar_linha_horizontal(slide, y=0.9, x_start=3.55, comprimento=3.6, texto_circulo= f"{percentuais.get('Tecnologia', 0)}%",titulo="TECNOLOGIA",
     cor_titulo=(10, 50, 100),
     descricao="Tecnologias atuais ampliam \nvigilância e pronta reação.")
     tracar_linha_horizontal(slide, y=1.8, x_start=4.4, comprimento=2.1,texto_circulo= f"{percentuais.get('Processos', 0)}%", titulo="PROCESSOS",
@@ -190,7 +190,7 @@ def gerar_resumo_exec(pres, dados):
     tracar_linha_horizontal(slide, y=3.85, x_start=4.4, comprimento=2.1,texto_circulo= f"{percentuais.get('Gestao', 0)}%", titulo="GESTÃO",
     cor_titulo=(10, 50, 100) ,
     descricao="Governança de riscos impulsiona \ndecisões mais seguras.")
-    tracar_linha_horizontal(slide, y=4.77   , x_start=3.45, comprimento=1.85, texto_circulo= f"{percentuais.get('Informacao', 0)}%", titulo="INFORMAÇÃO",
+    tracar_linha_horizontal(slide, y=4.77   , x_start=3.45, comprimento=3.55, texto_circulo= f"{percentuais.get('Informacao', 0)}%", titulo="INFORMAÇÃO",
     cor_titulo=(10, 50, 100) ,
     descricao="Políticas protegem dados \ne garante")
     # === FUNDO BRANCO === #

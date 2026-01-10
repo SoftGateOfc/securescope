@@ -135,7 +135,7 @@ def gerar_panorama_situacional(pres, dados):
     # === TÍTULO "NOME DO LOCAL" (centralizado, acima da imagem) === #
     titulo_local_box = slide.shapes.add_textbox(
         Inches(5.2),   # Alinhado com a borda esquerda da imagem
-        Inches(1.1),  # Subido
+        Inches(1.2),  # Subido
         Inches(4.5),   # Mesma largura da imagem
         Inches(0.4)  # Altura reduzida
     )
@@ -206,7 +206,7 @@ def gerar_panorama_situacional(pres, dados):
     if panorama_texto:
         texto_box = slide.shapes.add_textbox(
             Inches(1.0),  # Movido 0.4" para direita (era 0.6)
-            Inches(1.1),  # Subido de 1.8 para 1.4
+            Inches(1.3),  # Subido de 1.8 para 1.4
             Inches(3.5),  # Reduzido (era 3.9)
             Inches(0.7)  # Altura reduzida (era 1.0)
         )

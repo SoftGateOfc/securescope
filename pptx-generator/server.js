@@ -18,7 +18,11 @@ app.get("/", (req, res) => {
 
 app.post("/generate-pptx", async (req, res) => {
     try {
+        console.log("Recebendo dados...");
         const dados = req.body;
+
+        console.log("  - Empresa:", dados.dados?.nome_empresa);
+        console.log("  - Local:", dados.dados?.localizacao_analise);
 
         const pythonScript = path.resolve("./generate_ppt.py");
         const python = spawn("python", [pythonScript], {
@@ -36,6 +40,7 @@ app.post("/generate-pptx", async (req, res) => {
         });
 
         python.stderr.on("data", (data) => {
+            console.log("Python:", data.toString());
             errorOutput += data.toString();
         });
 
@@ -44,6 +49,8 @@ app.post("/generate-pptx", async (req, res) => {
                 console.error("Erro:", errorOutput);
                 return res.status(500).json({ error: errorOutput });
             }
+
+            console.log("PPTX gerado!", pptxBuffer.length, "bytes");
 
             res.set({
                 "Content-Type":
@@ -65,4 +72,5 @@ app.post("/generate-pptx", async (req, res) => {
 });
 
 app.listen(PORT, HOST, () => {
+    console.log("PPTX Generator em http://" + HOST + ":" + PORT);
 });

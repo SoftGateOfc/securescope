@@ -63,7 +63,7 @@
                         <%= index + 1 %>
                     </span>
                     <span
-                        class="text-sm text-sky-800 leading-relaxed flex-1 bg-blue-100 rounded-md pl-2"
+                        class="text-sm text-black leading-relaxed flex-1 bg-blue-100 rounded-md pl-2"
                     >
                         <%= item %>
                     </span>
@@ -71,7 +71,7 @@
                 <% }); %>
             </ol>
             <% } else { %>
-            <p class="text-lg text-gray-800 leading-relaxed text-justify">
+            <p class="text-lg text-sky-800 leading-relaxed text-justify">
                 <%= dados?.referencias_proximas || 'Informações não fornecidas.'
                 %>
             </p>
@@ -85,7 +85,7 @@
             </h3>
             <div class="max-w-3xl mx-auto">
                 <p
-                    class="text-lg text-red-500 leading-relaxed break-words hyphens-auto text-center"
+                    class="text-lg text-black leading-relaxed break-words hyphens-auto text-left"
                 >
                     <%= dados?.panorama || 'Informações não fornecidas.' %>
                 </p>

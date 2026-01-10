@@ -380,7 +380,7 @@ def gerar_vulnerabilidades_foto(pres, dados):
     print("🔄 Processando vulnerabilidades com fotos...", file=sys.stderr, flush=True)
     
     respostas = dados.get('dados_modelo', {}).get('respostas', [])
-    
+    print(f"📊 Total de respostas: {len(respostas)}", file=sys.stderr, flush=True)
     
     if not respostas:
         print("⚠️ Nenhuma resposta encontrada", file=sys.stderr, flush=True)
@@ -402,6 +402,8 @@ def gerar_vulnerabilidades_foto(pres, dados):
             else:
                 print(f"  ✗ NC-{r.get('nc', '???')} SEM foto", file=sys.stderr, flush=True)
     
+    print(f"📊 Vulnerabilidades (nivel > 1): {total_vulnerabilidades}", file=sys.stderr, flush=True)
+    print(f"📸 Vulnerabilidades COM foto: {total_com_foto}", file=sys.stderr, flush=True)
     
     # Filtrar vulnerabilidades COM foto
     vulnerabilidades_com_foto = [

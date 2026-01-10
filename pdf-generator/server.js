@@ -7,27 +7,39 @@ const fs = require("fs");
 
 const app = express();
 const PORT = process.env.PORT || 3001;
+const HOST = process.env.HOST || "0.0.0.0";
 
+// ===============================
+// IMPORTS DE UTILIDADES
+// ===============================
 const {
     calcularPaginasSumario,
     mostrarDetalhamento,
 } = require("./utils/paginacao");
-const { info } = require("console");
 
 const {
     processarNaoConformidadesParaRelatorio,
     processarRecomendacoesParaRelatorio,
 } = require("./utils/lista-paginada");
 
-app.use(express.json({ limit: "50mb" }));
-app.use(express.static("assets"));
+// ===============================
+// MIDDLEWARES
+// ===============================
+app.use(express.json({ limit: "100mb" }));
+app.use(express.urlencoded({ extended: true, limit: "100mb" }));
 
+app.use(express.static("assets"));
 app.use("/imagens", express.static(path.join(__dirname, "imagens")));
-// Configurar EJS
+
+// ===============================
+// EJS
+// ===============================
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "templates"));
 
-// Rota de teste
+// ===============================
+// ROTA DE TESTE
+// ===============================
 app.get("/", (req, res) => {
     res.json({
         status: "PDF Generator Online",
@@ -35,14 +47,17 @@ app.get("/", (req, res) => {
     });
 });
 
+// ===============================
+// FUNÇÕES AUXILIARES
+// ===============================
 function imageToBase64(imagePath) {
     try {
         if (fs.existsSync(imagePath)) {
             const imageData = fs.readFileSync(imagePath);
             const base64 = Buffer.from(imageData).toString("base64");
             const ext = path.extname(imagePath).toLowerCase();
-            let mimeType = "image/jpeg";
 
+            let mimeType = "image/jpeg";
             if (ext === ".png") mimeType = "image/png";
             else if (ext === ".gif") mimeType = "image/gif";
             else if (ext === ".webp") mimeType = "image/webp";
@@ -50,18 +65,16 @@ function imageToBase64(imagePath) {
             return `data:${mimeType};base64,${base64}`;
         }
         return null;
-    } catch (error) {
-        console.error(" Erro ao converter imagem:", error);
+    } catch (err) {
+        console.error("❌ Erro ao converter imagem:", err);
         return null;
     }
 }
 
-// Rota principal para gerar PDF
-// Função para carregar todas as imagens automaticamente
+// ⚠️ Mantido base64 por enquanto (igual ao exemplo)
 function carregarImagensEstaticas(dados) {
     if (!dados.imagens) dados.imagens = {};
 
-    // Definir quais imagens estáticas precisamos carregar
     const imagensEstaticas = {
         cidade: ["cidade.jpg", "cidade.jpeg", "cidade.png"],
         pilares: ["pilares.jpg", "pilares.jpeg", "pilares.png"],
@@ -70,31 +83,25 @@ function carregarImagensEstaticas(dados) {
         gestao: ["gestao.jpg", "gestao.jpeg", "gestao.png"],
         informacoes: ["informacoes.jpg", "informacoes.jpeg", "informacoes.png"],
         processos: ["processos.jpg", "processos.jpeg", "processos.png"],
+        logo_empresa: ["logo.png", "logo.jpg", "logo.jpeg"],
     };
 
-    // Para cada imagem definida, tentar carregar
-    for (const [nomeImagem, possiveisNomes] of Object.entries(
-        imagensEstaticas
-    )) {
-        let imagemEncontrada = false;
+    for (const [nomeImagem, arquivos] of Object.entries(imagensEstaticas)) {
+        let encontrado = false;
 
-        for (const nomeArquivo of possiveisNomes) {
-            const caminhoCompleto = path.join(
-                __dirname,
-                "imagens",
-                nomeArquivo
-            );
+        for (const arquivo of arquivos) {
+            const caminho = path.join(__dirname, "imagens", arquivo);
 
-            if (fs.existsSync(caminhoCompleto)) {
-                console.log(`✅ ${nomeImagem} encontrada: ${nomeArquivo}`);
-                dados.imagens[nomeImagem] = imageToBase64(caminhoCompleto);
-                imagemEncontrada = true;
+            if (fs.existsSync(caminho)) {
+                console.log(`✅ ${nomeImagem} carregada`);
+                dados.imagens[nomeImagem] = imageToBase64(caminho);
+                encontrado = true;
                 break;
             }
         }
 
-        if (!imagemEncontrada) {
-            console.log(`⚠️ ${nomeImagem} não encontrada`);
+        if (!encontrado) {
+            console.warn(`⚠️ ${nomeImagem} não encontrada`);
             dados.imagens[nomeImagem] = null;
         }
     }
@@ -102,9 +109,14 @@ function carregarImagensEstaticas(dados) {
     return dados;
 }
 
+// ===============================
+// ROTA PRINCIPAL - GERAR PDF
+// ===============================
 app.post("/generate-pdf", async (req, res) => {
-    try {
+    let browser;
 
+    try {
+        console.log("📨 Recebendo dados para PDF...");
         const dados = req.body;
 
         carregarImagensEstaticas(dados);
@@ -114,55 +126,66 @@ app.post("/generate-pdf", async (req, res) => {
             dados.dados_modelo
         );
 
-        // Verificar se existem respostas nos dados
-        const respostas = dados.dados_modelo?.respostas || [];
-
-        // Processar não conformidades
         const dadosLista = processarNaoConformidadesParaRelatorio({
             ...dados,
             numeroPaginas,
         });
 
-        // Processar recomendações
-        const dadosListaRecomendacoes = processarRecomendacoesParaRelatorio({
-            ...dados,
-            numeroPaginas,
-        });
+        const dadosListaRecomendacoes =
+            processarRecomendacoesParaRelatorio({
+                ...dados,
+                numeroPaginas,
+            });
 
         const dadosProcessados = {
             ...dados,
             numeroPaginas,
-            dadosLista, // Dados das não conformidades paginadas
-            dadosListaRecomendacoes, //  Dados das recomendações paginadas
+            dadosLista,
+            dadosListaRecomendacoes,
             dataGeracao: moment().format("DD/MM/YYYY HH:mm:ss"),
             timestamp: Date.now(),
         };
 
-        // RENDERIZAR TEMPLATE (igual)
+        // Renderizar HTML
         const html = await ejs.renderFile(
             path.join(__dirname, "templates", "relatorio.ejs"),
             dadosProcessados
         );
 
-        // GERAR PDF
-        const browser = await puppeteer.launch({
+        // Pasta temporária
+        const tempDir = path.join(__dirname, "temp");
+        if (!fs.existsSync(tempDir)) {
+            fs.mkdirSync(tempDir);
+        }
+
+        const outputPath = path.join(
+            tempDir,
+            `relatorio-${Date.now()}.pdf`
+        );
+
+        // Puppeteer
+        browser = await puppeteer.launch({
             headless: "new",
             args: [
                 "--no-sandbox",
                 "--disable-setuid-sandbox",
                 "--disable-web-security",
                 "--disable-features=VizDisplayCompositor",
+                "--disable-dev-shm-usage",
+                "--disable-gpu",
             ],
         });
 
         const page = await browser.newPage();
 
         await page.setContent(html, {
-            waitUntil: "domcontentloaded",
-            timeout: 40000,
+            waitUntil: "networkidle0",
+            timeout: 60000,
         });
 
-        const pdf = await page.pdf({
+        // ✅ GERAR PDF EM ARQUIVO
+        await page.pdf({
+            path: outputPath,
             format: "A4",
             printBackground: true,
             margin: {
@@ -175,27 +198,33 @@ app.post("/generate-pdf", async (req, res) => {
 
         await browser.close();
 
-        console.log("✅ PDF gerado com sucesso!");
+        console.log("✅ PDF gerado:", outputPath);
 
-        res.set({
-            "Content-Type": "application/pdf",
-            "Content-Disposition": 'inline; filename="relatorio.pdf"',
-            "Content-Length": pdf.length,
+        // Download
+        res.download(outputPath, "relatorio.pdf", (err) => {
+            if (err) {
+                console.error("❌ Erro no download:", err);
+            }
+
+            // Cleanup
+            fs.unlink(outputPath, () => {});
         });
-
-        res.send(pdf);
     } catch (error) {
+        if (browser) await browser.close();
+
         console.error("❌ Erro ao gerar PDF:", error);
         res.status(500).json({
             error: "Erro ao gerar PDF",
-            details: error.message,
+            message: error.message,
         });
     }
 });
 
-const HOST = process.env.HOST || "0.0.0.0";
-
+// ===============================
+// START SERVER
+// ===============================
 app.listen(PORT, HOST, () => {
+    console.log(`🚀 Servidor rodando em http://${HOST}:${PORT}`);
 });
 
 module.exports = app;

@@ -1,14 +1,14 @@
 class ListaPaginada {
     constructor() {
         this.config = {
-            itensPorPagina: 8,
+            itensPorPagina:7 ,
         };
     }
 
     /**
      * Função principal: pagina um vetor
      */
-    paginarVetor(vetor, itensPorPagina = 8, paginaInicial = 8) {
+    paginarVetor(vetor, itensPorPagina = 7, paginaInicial = 8) {
         if (!Array.isArray(vetor) || vetor.length === 0) {
             return [];
         }
