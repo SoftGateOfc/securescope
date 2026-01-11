@@ -106,13 +106,17 @@ def criar_caixa_informacoes(slide, vulnerabilidade, left, top, width, height):
     prioridade = vulnerabilidade.get('prioridade', '')
     prioridade_texto = mapear_prioridade_texto(prioridade)
     
+    recomendacao_raw = vulnerabilidade.get('recomendacao', '')
+    if recomendacao_raw is None or str(recomendacao_raw).strip() == "":
+        recomendacoes = "Não há recomendações para essa pergunta"
+    else:
+        recomendacoes = str(recomendacao_raw).strip()
+    
     # === 🔥 ÍCONE DO PILAR NO TOPO === #
-    # Mapear caminho do ícone
     current_dir = os.path.dirname(__file__)
     parent_dir = os.path.dirname(current_dir)
     images_dir = os.path.join(parent_dir, "images")
     
-    # Pegar o nome correto do ícone baseado no pilar
     icone_map = {
         'PESSOAS': 'pessoas.png',
         'TECNOLOGIA': 'tecnologia.png',
@@ -124,9 +128,8 @@ def criar_caixa_informacoes(slide, vulnerabilidade, left, top, width, height):
     icone_nome = icone_map.get(pilar_nome, 'pessoas.png')
     icone_path = os.path.join(images_dir, icone_nome)
     
-    # Adicionar ícone do pilar (centralizado no topo da caixa)
     icone_size = 0.4
-    icone_left = left + (width - icone_size) / 2  # Centralizar
+    icone_left = left + (width - icone_size) / 2
     icone_top = top + 0.1
     
     try:
@@ -158,13 +161,13 @@ def criar_caixa_informacoes(slide, vulnerabilidade, left, top, width, height):
     p_pilar.font.color.rgb = RGBColor(0, 51, 102)
     p_pilar.alignment = PP_ALIGN.CENTER
     
-    # === TEXTBOX COM INFORMAÇÕES (abaixo do pilar) === #
-    texto_top = icone_top + icone_size + 0.35  # Abaixo do nome do pilar
+    # === TEXTBOX COM INFORMAÇÕES === #
+    texto_top = icone_top + icone_size + 0.35
     
     text_box = slide.shapes.add_textbox(
         Inches(left + 0.15),
         Inches(texto_top),
-        Inches(width - 0.3),
+        Inches(width - 0.2),
         Inches(height - (texto_top - top) - 0.15)
     )
     
@@ -177,10 +180,8 @@ def criar_caixa_informacoes(slide, vulnerabilidade, left, top, width, height):
     cor_label = RGBColor(0, 51, 102)
     cor_valor = RGBColor(30, 115, 190)
     
-    # === 1. PERGUNTA: (inline) === #
+    # === 1. PERGUNTA === #
     p_pergunta = tf.paragraphs[0]
-    
-    # Run do label "Pergunta:"
     run_label = p_pergunta.add_run()
     run_label.text = "Pergunta: "
     run_label.font.name = "Arial"
@@ -188,19 +189,16 @@ def criar_caixa_informacoes(slide, vulnerabilidade, left, top, width, height):
     run_label.font.bold = True
     run_label.font.color.rgb = cor_label
     
-    # Run do valor (inline)
     run_valor = p_pergunta.add_run()
     run_valor.text = titulo_pergunta
     run_valor.font.name = "Arial"
     run_valor.font.size = Pt(9)
     run_valor.font.bold = False
     run_valor.font.color.rgb = cor_valor
+    p_pergunta.space_after = Pt(8)  # ← Reduzido de 10 para 8
     
-    p_pergunta.space_after = Pt(10)
-    
-    # === 2. TÓPICO: (inline) === #
+    # === 2. TÓPICO === #
     p_topico = tf.add_paragraph()
-    
     run_label = p_topico.add_run()
     run_label.text = "Tópico: "
     run_label.font.name = "Arial"
@@ -214,12 +212,10 @@ def criar_caixa_informacoes(slide, vulnerabilidade, left, top, width, height):
     run_valor.font.size = Pt(9)
     run_valor.font.bold = False
     run_valor.font.color.rgb = cor_valor
+    p_topico.space_after = Pt(8)  # ← Reduzido
     
-    p_topico.space_after = Pt(10)
-    
-    # === 3. ADEQUAÇÃO: (inline) === #
+    # === 3. ADEQUAÇÃO === #
     p_adequacao = tf.add_paragraph()
-    
     run_label = p_adequacao.add_run()
     run_label.text = "Adequação: "
     run_label.font.name = "Arial"
@@ -233,12 +229,10 @@ def criar_caixa_informacoes(slide, vulnerabilidade, left, top, width, height):
     run_valor.font.size = Pt(9)
     run_valor.font.bold = False
     run_valor.font.color.rgb = cor_valor
+    p_adequacao.space_after = Pt(8)  # ← Reduzido
     
-    p_adequacao.space_after = Pt(10)
-    
-    # === 4. RISCO: (inline) === #
+    # === 4. RISCO === #
     p_risco = tf.add_paragraph()
-    
     run_label = p_risco.add_run()
     run_label.text = "Risco: "
     run_label.font.name = "Arial"
@@ -252,12 +246,10 @@ def criar_caixa_informacoes(slide, vulnerabilidade, left, top, width, height):
     run_valor.font.size = Pt(9)
     run_valor.font.bold = False
     run_valor.font.color.rgb = cor_valor
+    p_risco.space_after = Pt(8)  # ← Reduzido
     
-    p_risco.space_after = Pt(10)
-    
-    # === 5. PRIORIDADE: (inline) === #
+    # === 5. PRIORIDADE === #
     p_prioridade = tf.add_paragraph()
-    
     run_label = p_prioridade.add_run()
     run_label.text = "Prioridade: "
     run_label.font.name = "Arial"
@@ -271,9 +263,26 @@ def criar_caixa_informacoes(slide, vulnerabilidade, left, top, width, height):
     run_valor.font.size = Pt(9)
     run_valor.font.bold = False
     run_valor.font.color.rgb = cor_valor
+    p_prioridade.space_after = Pt(8)  # ← Reduzido
+    
+    # === 6. RECOMENDAÇÕES === #
+    p_recomendacao = tf.add_paragraph()
+    run_label = p_recomendacao.add_run()
+    run_label.text = "Recomendações: "
+    run_label.font.name = "Arial"
+    run_label.font.size = Pt(10)
+    run_label.font.bold = True
+    run_label.font.color.rgb = cor_label
+    
+    run_valor = p_recomendacao.add_run()
+    run_valor.text = recomendacoes
+    run_valor.font.name = "Arial"
+    run_valor.font.size = Pt(9)
+    run_valor.font.bold = False
+    run_valor.font.color.rgb = cor_valor
+    # Sem space_after no último item
     
     return caixa
-
 
 def criar_slide_vulnerabilidade_foto(pres, dados, vulnerabilidade):
     """Cria um slide de vulnerabilidade com foto"""
@@ -329,14 +338,14 @@ def criar_slide_vulnerabilidade_foto(pres, dados, vulnerabilidade):
     p.alignment = PP_ALIGN.CENTER
 
     # === CAIXA DE INFORMAÇÕES === #
-    criar_caixa_informacoes(slide, vulnerabilidade, 0.3, 1.7, 3.0, 2.9)
+    criar_caixa_informacoes(slide, vulnerabilidade, 0.3, 1.3, 3.35, 3.4)
     
     # === FOTO === #
     foto_base64 = vulnerabilidade.get('foto_base64', None)
     
     if foto_base64:
         print(f"  📸 Adicionando foto NC-{vulnerabilidade.get('nc', '???')}", file=sys.stderr, flush=True)
-        sucesso = add_base64_image(slide, foto_base64, 3.5, 1.4, 6.0, 3.2)
+        sucesso = add_base64_image(slide, foto_base64, 3.85, 1.3, 6, 3.4)
         
         if not sucesso:
             placeholder = slide.shapes.add_shape(
@@ -368,7 +377,7 @@ def criar_slide_vulnerabilidade_foto(pres, dados, vulnerabilidade):
             if ',' in logo:
                 logo = logo.split(',')[1]
             stream = BytesIO(base64.b64decode(logo))
-            slide.shapes.add_picture(stream, Inches(9.0), Inches(4.7), width=Inches(0.8))
+            slide.shapes.add_picture(stream, Inches(9.0), Inches(4.7), width=Inches(0.7))
         except Exception as e:
             print(f"❌ Erro logo: {e}", file=sys.stderr, flush=True)
     

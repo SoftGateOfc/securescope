@@ -115,11 +115,12 @@ def gerar_capa(pres, dados):
         empresa_box = slide.shapes.add_textbox(
             title_left,
             info_top,
-            Inches(6.0),
-            Inches(0.4)
+            Inches(4.0),
+            Inches(0.5)
         )
         tf_emp = empresa_box.text_frame
         tf_emp.clear()
+        tf_emp.word_wrap = True
         p_emp = tf_emp.paragraphs[0]
         p_emp.text = empresa.upper()
         p_emp.font.name = "Calibri"
@@ -132,11 +133,12 @@ def gerar_capa(pres, dados):
         loc_box = slide.shapes.add_textbox(
             title_left,
             info_top + Inches(0.45),
-            Inches(6.0),
-            Inches(0.3)
+            Inches(4.0),
+            Inches(0.6)
         )
         tf_loc = loc_box.text_frame
         tf_loc.clear()
+        tf_loc.word_wrap = True
         p_loc = tf_loc.paragraphs[0]
         p_loc.text = local.upper()
         p_loc.font.name = "Calibri Light"

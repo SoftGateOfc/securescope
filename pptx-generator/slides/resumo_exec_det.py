@@ -220,8 +220,8 @@ def gerar_resumo_exec_det(pres, dados):
 
         margem_interna = 0.15
         qtd_ret_internos = 4
-        altura_ret_interno = 0.55
-        espaco_vertical = 0.15
+        altura_ret_interno = 0.6
+        espaco_vertical = 0.1
 
         largura_interna = largura_ret - (margem_interna * 2)
 
@@ -234,14 +234,14 @@ def gerar_resumo_exec_det(pres, dados):
         )
 
         for j in range(qtd_ret_internos):
-            top_interno = topo_inicial_interno + j * (altura_ret_interno + espaco_vertical) - 0.3
+            top_interno = topo_inicial_interno + j * (altura_ret_interno + espaco_vertical) - 0.25
 
             ret_interno = slide.shapes.add_shape(
                 MSO_SHAPE.ROUNDED_RECTANGLE,
                 Inches(left + margem_interna),
-                Inches(top_interno),
+                Inches(top_interno - 0.1),
                 Inches(largura_interna),
-                Inches(altura_ret_interno)
+                Inches(altura_ret_interno + 0.02)
             )
 
             ret_interno.fill.solid()
@@ -264,7 +264,7 @@ def gerar_resumo_exec_det(pres, dados):
                 p.alignment = PP_ALIGN.CENTER
 
                 p.font.name = "Arial"
-                p.font.size = Pt(11)
+                p.font.size = Pt(10)
                 p.font.bold = True
                 p.font.color.rgb = cores[i]
 

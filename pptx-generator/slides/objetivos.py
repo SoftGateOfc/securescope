@@ -278,7 +278,7 @@ def gerar_objetivos(pres, dados):
     p2.font.size = Pt(14)
     p2.font.color.rgb = RGBColor(255, 255, 255)
     p2.alignment = PP_ALIGN.LEFT
-    p2.space_after = Pt(100)
+    p2.space_after = Pt(75)
 
     p3 = tf2.add_paragraph()
     p3.text = f"Os resultados permitirão a {nome_empresa} planejar ações corretivas e prevenir incidentes que afetem pessoas, ativos e a operação de forma contínua e eficaz."

@@ -94,24 +94,24 @@ def criar_slide_recomendacoes(pres, dados, itens_slide):
 
     table = slide.shapes.add_table(
         rows, cols,
-        Inches(0.3), Inches(1.2),
-        Inches(9.0),
-        Inches(0.2 + 0.6 * len(itens_slide))
+        Inches(0.25), Inches(1.2),
+        Inches(9.05),
+        Inches(0.2 + 0.65 * len(itens_slide))
     ).table
 
     # Larguras (6 colunas)
-    widths = [1.0, 0.9, 2.0, 2.1 , 1.8, 1.0]
+    widths = [0.9, 0.5, 1.95, 2.7 , 2.1, 0.9]
     for i, w in enumerate(widths):
         table.columns[i].width = Inches(w)
 
     # Alturas
     table.rows[0].height = Inches(0.3 / 2) 
     for i in range(1, rows):
-        table.rows[i].height = Inches(0.6)
+        table.rows[i].height = Inches(0.64)
 
     # Cabeçalho
     headers = [
-        "Elementos", "NC", "Classificação",
+        "Pilares", "NC", "Classificação",
         "Recomendação", "Riscos Mitigados", "Prioridade"  
     ]
 
@@ -137,7 +137,7 @@ def criar_slide_recomendacoes(pres, dados, itens_slide):
     # Guardar posição da tabela para calcular posições das células
     table_left = Inches(0.3)
     table_top = Inches(1.2)
-    row_height = Inches(0.6)
+    row_height = Inches(0.64)
     header_height = Inches(0.3)
     
     for row_idx, item in enumerate(itens_slide, start=1):
@@ -169,7 +169,7 @@ def criar_slide_recomendacoes(pres, dados, itens_slide):
             if os.path.exists(image_path):
                 slide.shapes.add_picture(
                     image_path,
-                    col_0_left + Inches(0.25),
+                    col_0_left + Inches(0.2),
                     cell_top + Inches(0.1),  
                     width=Inches(0.4)
                 )
@@ -223,7 +223,7 @@ def criar_slide_recomendacoes(pres, dados, itens_slide):
         
         # Calcular posição X da coluna 5 (última coluna)
         
-        col_5_left = table_left + Inches(7.8)
+        col_5_left = table_left + Inches(8.05)
         
         circulo = slide.shapes.add_shape(
             MSO_SHAPE.OVAL,
@@ -240,7 +240,7 @@ def criar_slide_recomendacoes(pres, dados, itens_slide):
     # -------- TÍTULO DA LEGENDA  -------- #
     titulo_legenda = slide.shapes.add_textbox(
         Inches(0.3),
-        Inches(4.55),
+        Inches(4.75),
         Inches(4.2),
         Inches(0.25)
     )
@@ -254,7 +254,7 @@ def criar_slide_recomendacoes(pres, dados, itens_slide):
 
     legenda = slide.shapes.add_textbox(
         Inches(0.2),
-        Inches(4.8),
+        Inches(5.0),
         Inches(4.2),
         Inches(0.4)
     )
@@ -276,7 +276,7 @@ def criar_slide_recomendacoes(pres, dados, itens_slide):
     ]
 
     start_x = Inches(0.3)
-    y = Inches(4.9)
+    y = Inches(5.1)
     espacamento = Inches(1.2)
 
     for texto, cor in legenda_itens:
@@ -307,13 +307,13 @@ def criar_slide_recomendacoes(pres, dados, itens_slide):
       
     titulo_elementos = slide.shapes.add_textbox(
         Inches(4.7),
-        Inches(4.55),
+        Inches(4.75),
         Inches(4.8),
         Inches(0.25)
     )
 
     p = titulo_elementos.text_frame.paragraphs[0]
-    p.text = "Elementos"
+    p.text = "Pilares"
     p.font.size = Pt(10)
     p.font.bold = True
     p.font.color.rgb = RGBColor(0, 51, 102)
@@ -322,7 +322,7 @@ def criar_slide_recomendacoes(pres, dados, itens_slide):
     # ========= CAIXA DA LEGENDA ========= #
     legenda_elementos = slide.shapes.add_textbox(
         Inches(4.5),
-        Inches(4.8),
+        Inches(5.0),
         Inches(4.6),
         Inches(0.4)
     )
@@ -345,7 +345,7 @@ def criar_slide_recomendacoes(pres, dados, itens_slide):
     ]
 
     start_x = Inches(4.6)
-    y = Inches(4.85)
+    y = Inches(5.05)
     espacamento = Inches(0.95)
 
     for nome_icone, texto in elementos:
@@ -385,7 +385,7 @@ def criar_slide_recomendacoes(pres, dados, itens_slide):
             if ',' in logo:
                 logo = logo.split(',')[1]
             stream = BytesIO(base64.b64decode(logo))
-            slide.shapes.add_picture(stream, Inches(9.1), Inches(4.5), width=Inches(0.8))
+            slide.shapes.add_picture(stream, Inches(9.15), Inches(4.7), width=Inches(0.8))
         except Exception as e:
             print(f"Erro ao adicionar logo: {e}", file=sys.stderr)
 
