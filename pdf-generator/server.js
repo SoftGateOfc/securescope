@@ -71,7 +71,7 @@ function imageToBase64(imagePath) {
     }
 }
 
-// ⚠️ Carrega imagens estáticas APENAS se não vieram do Laravel
+// ⚠️ Mantido base64 por enquanto (igual ao exemplo)
 function carregarImagensEstaticas(dados) {
     if (!dados.imagens) dados.imagens = {};
 
@@ -87,7 +87,7 @@ function carregarImagensEstaticas(dados) {
     };
 
     for (const [nomeImagem, arquivos] of Object.entries(imagensEstaticas)) {
-    
+        // ✅ SÓ CARREGA SE A IMAGEM NÃO EXISTIR (ou for null)
         if (dados.imagens[nomeImagem]) {
             console.log(`✅ ${nomeImagem} já existe (vinda do Laravel)`);
             continue;

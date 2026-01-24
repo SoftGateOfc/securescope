@@ -14,30 +14,37 @@
                 ></div>
             </div>
         </div>
+        
+        <!-- Logo da Empresa (movido para cá) -->
+        <% if (imagens && imagens.logo_empresa) { %>
+        <div class="absolute top-60 left-1/2 transform -translate-x-1/2 z-10">
+            <div class=" rounded-lg p-3 shadow-lg">
+                <img
+                    src="<%= imagens.logo_empresa %>"
+                    alt="Logo"
+                    class="w-24 h-24 object-contain"
+                />
+            </div>
+        </div>
+        <% } %>
+        <% if (imagens && imagens.logo_cliente) { %>
+        <div class="absolute top-96 left-1/2 transform -translate-x-1/2 z-10">
+            <div class=" rounded-lg p-3 shadow-lg">
+                <img
+                    src="<%= imagens.logo_cliente %>"
+                    alt="Logo Cliente"
+                    class="w-24 h-24 object-contain"
+                />
+            </div>
+        </div>
+        <% } %>
     </div>
 
     <!-- Lado Branco -->
     <div class="w-2/3 bg-white p-12 flex flex-col text-black">
-        <!-- Logo da Empresa -->
-        <% if (imagens && imagens.logo_empresa) { %>
-        <div class="text-right mb-8">
-            <img
-                src="<%= imagens.logo_empresa %>"
-                alt="Logo"
-                class="w-24 h-24 object-contain inline-block"
-            />
-        </div>
-        <% } %>
-
         <!-- Conteúdo Principal -->
-        <div class="flex-1 flex flex-col justify-center">
-            <!-- Data -->
-            <div class="text-center text-2xl text-gray-800 font-bold mb-4">
-                <%= dataGeracao ? dataGeracao.split(' ')[0] : new
-                Date().toLocaleDateString('pt-BR') %>
-            </div>
-
-            <!-- Título Principal -->
+        <div class="flex-1 flex flex-col justify-center -mt-6">
+            <!-- Título Principal (puxado para cima) -->
             <div class="text-center">
                 <h1 class="text-6xl font-bold leading-tight mb-6">
                     ANÁLISE<br />DE RISCO
@@ -90,6 +97,12 @@
                     class="text-sm text-gray-700 uppercase tracking-wide font-bold"
                 >
                     Itens Analisados
+                </div>
+                
+                <!-- Data movida para cá (abaixo dos itens analisados) -->
+                <div class="text-sm text-gray-600 mt-3 font-semibold">
+                    <%= dataGeracao ? dataGeracao.split(' ')[0] : new
+                    Date().toLocaleDateString('pt-BR') %>
                 </div>
             </div>
         </div>

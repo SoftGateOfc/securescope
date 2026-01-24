@@ -47,10 +47,14 @@ def gerar_capa(pres, dados):
     except Exception as e:
         print(f"Erro ao carregar imagem de fundo: {e}", file=sys.stderr)
 
-    # === LOGO DA EMPRESA === #
-    logo = dados.get("imagens", {}).get("logo_empresa")
-    if logo:
-        add_base64_image(slide, logo, 0.35, 0.35, 1.5, 0.92)
+    logo_empresa = dados.get("imagens", {}).get("logo_empresa")
+    if logo_empresa:
+        add_base64_image(slide, logo_empresa, 0.35, 0.35, 1.5, 0.92)
+
+    logo_cliente = dados.get("imagens", {}).get("logo_cliente")
+    if logo_cliente:
+    
+        add_base64_image(slide, logo_cliente, 8.15, 0.35, 1.5, 0.92)
 
     # === TÍTULO PRINCIPAL === #
     title_left = Inches(4.5)
