@@ -71,7 +71,7 @@ function imageToBase64(imagePath) {
     }
 }
 
-// ⚠️ Mantido base64 por enquanto (igual ao exemplo)
+
 function carregarImagensEstaticas(dados) {
     if (!dados.imagens) dados.imagens = {};
 
