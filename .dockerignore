@@ -1,0 +1,46 @@
+# Na raiz do projeto
+cat > .dockerignore << 'EOF'
+# Git
+.git
+.gitignore
+
+# Node modules (instalados no container)
+**/node_modules
+**/npm-debug.log
+
+# Composer vendor (instalado no container)
+**/vendor
+
+# Laravel cache/logs
+www/securescope/storage/logs/*
+www/securescope/storage/framework/cache/*
+www/securescope/storage/framework/sessions/*
+www/securescope/storage/framework/views/*
+www/securescope/bootstrap/cache/*
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# IDE
+.vscode
+.idea
+
+# Python
+**/__pycache__
+**/venv
+**/env
+
+# Database files
+docker/database/
+mysql-data/
+
+# Logs
+logs/
+*.log
+
+# Build artifacts
+www/securescope/public/build
+www/securescope/public/hot
+EOF

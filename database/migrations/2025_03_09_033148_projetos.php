@@ -30,7 +30,7 @@ return new class extends Migration
             $table->integer('total_riscos_altissimos')->default(0);
             $table->integer('total_recomendacoes')->default(0);
 
-            $table->dateTime('data_cadastro')->default(DB::raw('CURRENT_DATE'));
+            $table->dateTime('data_cadastro')->default(DB::raw('CURRENT_TIMESTAMP'));
             $table->unsignedBigInteger("empresa_id");
             $table->foreign("empresa_id")->references("id")->on("empresas");
             $table->timestamps();

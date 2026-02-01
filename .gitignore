@@ -26,3 +26,10 @@ pdf-generator/node_modules/
 pdf-generator/package-lock.json
 pptx-generator/node_modules/
 pptx-generator/package-lock.json
+
+# Vite
+/public/build/*
+
+
+# docker-pdf-generator
+/pdf-generator/*
