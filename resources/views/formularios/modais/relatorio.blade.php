@@ -14,7 +14,10 @@
         <x-input label="Localização da análise" name="localizacao_analise" value="{{ old('localizacao_analise') }}"></x-input>
         <x-input label="Referências próximas" name="referencias_proximas" value="{{ old('referencias_proximas') }}"></x-input>
         <x-textarea id="panorama" label="Panorama situacional - Exposição ao Risco" name="panorama"></x-textarea>        
-        <x-botao type="submit" icon="fas fa-file-pdf" class="w-full" cor="vermelho"></x-botao>
+        <div class="flex gap-2 mt-3 justify-center">
+            <x-botao id="btn_gerar_pdf" type="button" label="Gerar PDF" icon="fas fa-file-pdf" class="flex-1" cor="vermelho"></x-botao>
+            <x-botao id="btn_gerar_pptx" type="button" label="Gerar PPTX" icon="fas fa-file-powerpoint" class="flex-1" cor="verde"></x-botao>
+        </div>
     </form>
 </x-modal>
 <script>

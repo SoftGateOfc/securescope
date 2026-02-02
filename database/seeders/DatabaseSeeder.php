@@ -14,25 +14,13 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         User::create([
-            'nome' => 'Artur Borges',
+            'nome' => 'administrador',
             'atribuicao' => 'administrador',
             'cpf_cnpj' => '145.475.167-31',
-            'email' => 'arturborges2009@hotmail.com',
-            'whatsapp' => '21981672720',            
-        ]);
-        User::create([
-            'nome' => 'Thiago Coutinho',
-            'atribuicao' => 'administrador',
-            'cpf_cnpj' => '186.762.527-00',
-            'email' => 'thiago.ocoutinho@hotmail.com',
-            'whatsapp' => '21972757281',            
-        ]);
-        User::create([
-            'nome' => 'Mateus Maldonado',
-            'atribuicao' => 'administrador',
-            'cpf_cnpj' => '146.647.217-06',
-            'email' => 'mateusmald@gmail.com',
-            'whatsapp' => '21974679898',            
+            'email' => 'admin@mail.com',
+            'whatsapp' => '21981672720',
+            'password' => bcrypt('123123'),
+            'ativo' => true            
         ]);
     }
 }
