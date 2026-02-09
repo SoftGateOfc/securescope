@@ -79,22 +79,34 @@ class Projeto extends Model
         }
         return $projeto;
     }
-
+ 
+    // Belchior: Consertei as porcentagens aqui 
     public static function atualizar_estatisticas_projeto($formulario_id){
-        $formulario = Models\Formulario::find($formulario_id);
-        $projeto = Models\Projeto::find($formulario->projeto_id);
-        if($projeto){
-            $projeto_id = $projeto->id;
-            $projeto->update([
-                'total_perguntas' => Models\Formulario::where('projeto_id', $projeto_id)->sum('total_perguntas'),
-                'total_perguntas_respondidas' => Models\Formulario::where('projeto_id', $projeto_id)->sum('total_perguntas_respondidas'),
-                'porcentagem_preenchimento' => Models\Formulario::where('projeto_id', $projeto_id)->sum('porcentagem_preenchimento'),
-                'total_vulnerabilidades' => Models\Formulario::where('projeto_id', $projeto_id)->sum('total_vulnerabilidades'),
-                'total_riscos_altissimos' => Models\Formulario::where('projeto_id', $projeto_id)->sum('total_riscos_altissimos'),
-                'total_recomendacoes' => Models\Formulario::where('projeto_id', $projeto_id)->sum('total_recomendacoes')
-            ]);
-        }
+    $formulario = Models\Formulario::find($formulario_id);
+    $projeto = Models\Projeto::find($formulario->projeto_id);
+    
+    if($projeto){
+        $projeto_id = $projeto->id;
+        
+      
+        $total_perguntas = Models\Formulario::where('projeto_id', $projeto_id)->sum('total_perguntas');
+        $total_perguntas_respondidas = Models\Formulario::where('projeto_id', $projeto_id)->sum('total_perguntas_respondidas');
+        
+        
+        $porcentagem_preenchimento = $total_perguntas > 0 
+            ? ($total_perguntas_respondidas / $total_perguntas) * 100 
+            : 0;
+        
+        $projeto->update([
+            'total_perguntas' => $total_perguntas,
+            'total_perguntas_respondidas' => $total_perguntas_respondidas,
+            'porcentagem_preenchimento' => $porcentagem_preenchimento, // ← AGORA ESTÁ CORRETO
+            'total_vulnerabilidades' => Models\Formulario::where('projeto_id', $projeto_id)->sum('total_vulnerabilidades'),
+            'total_riscos_altissimos' => Models\Formulario::where('projeto_id', $projeto_id)->sum('total_riscos_altissimos'),
+            'total_recomendacoes' => Models\Formulario::where('projeto_id', $projeto_id)->sum('total_recomendacoes')
+        ]);
     }
+}
 
     public function tipos_empreendimentos()
     {
@@ -105,4 +117,9 @@ class Projeto extends Model
     {
         return $this->hasMany(ProjetoUsuario::class, 'projeto_id');
     }
+
+    public function formularios()
+{
+    return $this->hasMany(Formulario::class, 'projeto_id');
+}
 }

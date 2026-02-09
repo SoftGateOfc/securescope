@@ -11,6 +11,8 @@ Route::middleware(['auth'])->group(function() {
     Route::get('online', function(){
         return response()->json('online', 200);
     });
+
+    
     
     Route::controller(Controllers\EmpresaController::class)->group(function(){
         Route::prefix('empresas')->group(function(){
@@ -104,9 +106,11 @@ Route::middleware(['auth'])->group(function() {
             Route::put('editar/{id}', 'editar')->can('administrador', App\Models\User::class);
             Route::get('detalhes/{id}', 'detalhes')->can('administrador', App\Models\User::class);
             Route::get('estatisticas', 'estatisticas');
+            Route::get('periodos_disponiveis', 'periodos_disponiveis');
+            Route::post('estatisticas_por_periodo', 'estatisticas_por_periodo');
         });
     });
-
+ 
     Route::controller(Controllers\FuncionarioController::class)->group(function(){
         Route::prefix('funcionarios')->group(function(){
             Route::get('/', 'index');

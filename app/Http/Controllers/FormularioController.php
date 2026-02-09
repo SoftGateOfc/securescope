@@ -68,25 +68,28 @@ class FormularioController extends Controller
         for($i = 0; $i < count($perguntas); $i++){            
             $resposta = Models\Resposta::where('formulario_id', $formulario_id)
             ->where('pergunta_id', $perguntas[$i]->id)
-            ->select("nivel_adequacao", "esta_em_risco_altissimo", "prazo", "arquivo_id")
+            ->select("nivel_adequacao", "esta_em_risco_altissimo", "prazo", "arquivo_id","resposta")
             ->first();
             $nivel_adequacao = 0;
             $risco_altissimo = 'nao';
             $prazo = "Longo prazo";
             $respondido = false;
             $foto = false;
+            $recomendacao = '';
             if($resposta){      
                 $respondido = true;          
                 $nivel_adequacao = $resposta->nivel_adequacao; 
                 $risco_altissimo = $resposta->esta_em_risco_altissimo ? 'sim' : 'nao';
                 $prazo = $resposta->prazo;
                 $foto = $resposta->arquivo_id;
+                $recomendacao = $resposta->resposta;
             }            
             $perguntas[$i]->foto = $foto;
             $perguntas[$i]->respondido = $respondido;
             $perguntas[$i]->nivel_adequacao = $nivel_adequacao;             
             $perguntas[$i]->risco_altissimo = $risco_altissimo;
-            $perguntas[$i]->prazo = $prazo;             
+            $perguntas[$i]->prazo = $prazo; 
+            $perguntas[$i]->recomendacao = $recomendacao;            
         }
         $dados = [
             'formulario' => $formulario,

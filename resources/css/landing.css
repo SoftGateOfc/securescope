@@ -1,0 +1,94 @@
+
+:root {
+    --font-sans: 'Archivo', ui-sans-serif, system-ui, sans-serif !important;
+}
+
+/* Garantir que a fonte Archivo está declarada */
+@font-face {
+    font-family: 'Archivo';
+    src: url('../fonts/archivoV.ttf');
+    font-weight: normal;
+    font-style: normal;
+}
+
+/* Força GLOBAL - sobrescreve tudo */
+html,
+body,
+* {
+    font-family: 'Archivo', ui-sans-serif, system-ui, sans-serif !important;
+}
+
+/* Sobrescrever classes do Tailwind */
+.font-sans,
+.font-serif,
+.font-mono {
+    font-family: 'Archivo', ui-sans-serif, system-ui, sans-serif !important;
+}
+
+/* Elementos estruturais */
+nav, nav *,
+section, section *,
+footer, footer *,
+header, header * {
+    font-family: 'Archivo', ui-sans-serif, system-ui, sans-serif !important;
+}
+
+/* Elementos de texto */
+h1, h2, h3, h4, h5, h6,
+p, span, div, a, button,
+input, textarea, select, label,
+li, ul, ol, table, td, th {
+    font-family: 'Archivo', ui-sans-serif, system-ui, sans-serif !important;
+}
+
+/* ==========================================
+   SMOOTH SCROLLING E NAVEGAÇÃO
+   ========================================== */
+
+html {
+    scroll-behavior: smooth;
+}
+
+section {
+    scroll-margin-top: 80px;
+}
+
+/* ==========================================
+   ANIMAÇÕES DE ENTRADA
+   ========================================== */
+
+section:not(:first-of-type) {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+section.fade-in {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+section:first-of-type {
+    opacity: 1 !important;
+    transform: translateY(0) !important;
+}
+
+/* ==========================================
+   NAVBAR E NAVEGAÇÃO
+   ========================================== */
+
+nav {
+    transition: all 0.3s ease;
+}
+
+/* ==========================================
+   EFEITOS DE HOVER
+   ========================================== */
+
+.hover-scale {
+    transition: transform 0.3s ease;
+}
+
+.hover-scale:hover {
+    transform: scale(1.05);
+}

@@ -14,7 +14,8 @@ import {
   Tooltip,
   Legend,
   BarController,
-  BarElement
+  BarElement,
+  Filler
 } from 'chart.js';
 
 Chart.register(
@@ -27,7 +28,8 @@ Chart.register(
   Tooltip,
   Legend,
   BarController,
-  BarElement
+  BarElement,
+  Filler
 );
 
 //VARIÁVEIS GLOBAIS DA APLICAÇÃO

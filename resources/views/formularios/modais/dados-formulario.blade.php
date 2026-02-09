@@ -4,7 +4,7 @@
         <p class="classe-opcao">Nível de adequação identificado na inspeção</p>
         <ol class="opcoes mt-4 flex items-center">
             <li class="relative w-full mb-6">
-                <div class="mb-3">
+                <div class="mb-7">
                     <h3 class="font-medium text-gray-900">Atende plenamente</h3>
                 </div>
                 <div class="flex items-center">
@@ -18,7 +18,7 @@
                 </div>
             </li>
             <li class="relative w-full mb-6">
-                <div class="mb-3">
+                <div class="mb-7">
                     <h3 class="font-medium text-gray-900">Atende após ajustes</h3>
                 </div>
                 <div class="flex items-center">
@@ -32,7 +32,7 @@
                 </div>
             </li>
             <li class="relative w-full mb-6">
-                <div class="mb-3">
+                <div class="mb-7">
                     <h3 class="font-medium text-gray-900">Atende após ajustes médios</h3>
                 </div>
                 <div class="flex items-center">
@@ -46,7 +46,7 @@
                 </div>
             </li>
             <li class="relative w-full mb-6">
-                <div class="mb-3">
+                <div class="mb-7">
                     <h3 class="font-medium text-gray-900">Não atende</h3>
                 </div>
                 <div class="flex items-center">
@@ -60,7 +60,7 @@
                 </div>
             </li>
             <li class="relative w-full mb-6">
-                <div class="mb-3">
+                <div class="mb-7">
                     <h3 class="font-medium text-gray-900">Não existe</h3>
                 </div>
                 <div class="flex items-center">

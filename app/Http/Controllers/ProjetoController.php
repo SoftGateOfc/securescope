@@ -27,7 +27,8 @@ class ProjetoController extends Controller
             'tipos_empreendimentos.tipo_empreendimento',
             'usuarios.usuario',
             'usuario_criador',
-            'cliente'
+            'cliente',
+            'formularios'
         ])
         ->where('empresa_id', session('empresa_id'))
         ->orderBy('data_inicio', 'desc')->get();

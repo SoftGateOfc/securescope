@@ -85,3 +85,86 @@ nav, aside{
     padding: 2px;
     text-align: center;
 }
+#btn_toggle_grafico {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+#btn_toggle_grafico:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+#btn_toggle_grafico:active {
+    transform: translateY(0);
+}
+
+/* ===== Toggle slim minimalista ===== */
+
+/* ===== Toggle moderno com gradiente suave ===== */
+
+.toggle-wrapper {
+    background-color: #f3f4f6;
+    padding: 3px;
+    border-radius: 9999px;
+    display: inline-flex;
+    gap: 4px;
+}
+
+/* botão base */
+#btn_projetos,
+#btn_riscos {
+    padding: 4px 12px;
+    font-size: 13px;
+    font-weight: 500;
+
+    border-radius: 9999px;
+    background: transparent;
+    color: #6b7280;
+
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+
+#btn_projetos:hover,
+#btn_riscos:hover {
+    background-color: rgba(0,0,0,0.05);
+}
+
+
+#btn_projetos.ativo {
+    background: linear-gradient(
+        135deg,
+        rgba(59,130,246,0.38),
+        rgba(59,130,246,0.08)
+    );
+}
+
+#btn_riscos.ativo {
+    background: linear-gradient(
+        135deg,
+        rgba(239,68,68,0.38),
+        rgba(239,68,68,0.08)
+    );
+}
+
+
+#btn_projetos:active,
+#btn_riscos:active {
+    transform: scale(0.97);
+}
+
+
+.dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 9999px;
+}
+
+.dot-projetos {
+    background-color: #3b82f6;
+}
+
+.dot-riscos {
+    background-color: #ef4444;
+}
