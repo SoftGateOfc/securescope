@@ -73,4 +73,18 @@ class ProjetoController extends Controller
         ])
         ->find($usuario_id);
     }
+
+    public function excluir($projeto_id, Request $request){
+        $projeto = Models\Projeto::where('empresa_id', session('empresa_id'))->find($projeto_id);
+        if(!$projeto){
+            return response()->json('Projeto não encontrado!', 404);
+        }
+        $possui_formularios = $projeto->formularios()->exists();
+        if($possui_formularios && !$request->boolean('force')){
+            return response()->json('Ainda há formulários ativos neste projeto. Deseja prosseguir?', 409);
+        }
+        Models\Auditoria::registrar_atividade('Exclusão de Projeto');
+        $projeto->delete();
+        return response()->json('Projeto excluído com sucesso!', 200);
+    }
 }

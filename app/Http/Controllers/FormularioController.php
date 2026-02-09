@@ -177,6 +177,17 @@ class FormularioController extends Controller
         }
     }
 
+    public function excluir($formulario_id){
+        $formulario = Models\Formulario::where('empresa_id', session('empresa_id'))->find($formulario_id);
+        if(!$formulario){
+            return response()->json('Formulário não encontrado!', 404);
+        }
+        Models\Auditoria::registrar_atividade('Exclusão de Formulário');
+        $formulario->delete();
+        Models\Projeto::atualizar_estatisticas_projeto($formulario_id);
+        return response()->json('Formulário excluído com sucesso!', 200);
+    }
+
     public function registrar(Request $request){        
         $validator = Validator::make($request->all(), [
             'resposta' => 'required|max:10000',

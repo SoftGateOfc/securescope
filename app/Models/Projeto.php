@@ -3,11 +3,14 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Auth;
 use App\Models;
 
 class Projeto extends Model
 {
+    use SoftDeletes;
+
     protected $table = 'projetos';
 
     protected $fillable = [
@@ -30,6 +33,11 @@ class Projeto extends Model
     public function usuario_criador()
     {
         return $this->belongsTo(User::class, 'usuario_criador_projeto_id');
+    }
+
+    public function formularios()
+    {
+        return $this->hasMany(Formulario::class, 'projeto_id');
     }
 
     public function cliente()
@@ -81,7 +89,10 @@ class Projeto extends Model
     }
 
     public static function atualizar_estatisticas_projeto($formulario_id){
-        $formulario = Models\Formulario::find($formulario_id);
+        $formulario = Models\Formulario::withTrashed()->find($formulario_id);
+        if(!$formulario){
+            return;
+        }
         $projeto = Models\Projeto::find($formulario->projeto_id);
         if($projeto){
             $projeto_id = $projeto->id;
@@ -94,6 +105,17 @@ class Projeto extends Model
                 'total_recomendacoes' => Models\Formulario::where('projeto_id', $projeto_id)->sum('total_recomendacoes')
             ]);
         }
+    }
+
+    protected static function booted()
+    {
+        static::deleting(function ($projeto) {
+            if ($projeto->isForceDeleting()) {
+                $projeto->formularios()->withTrashed()->forceDelete();
+                return;
+            }
+            $projeto->formularios()->delete();
+        });
     }
 
     public function tipos_empreendimentos()

@@ -23,7 +23,8 @@ class PerguntaController extends Controller
     }
 
     public function lista(){        
-        return Models\Pergunta::with(['tematica'])->orderBy('titulo', 'asc')->get();
+        $perguntas = Models\Pergunta::with(['tematica'])->get();
+        return $perguntas->sortBy('tematica.nome')->values();
     }
 
     public function adicionar(Request $request){                        
