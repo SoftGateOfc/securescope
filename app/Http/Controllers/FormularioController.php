@@ -99,6 +99,12 @@ class FormularioController extends Controller
     }
 
     public function responder_pergunta(Request $request){        
+        $validator = Validator::make($request->all(), [
+            'foto' => 'nullable|image|mimes:jpg,jpeg,png|max:20480'
+        ]);
+        if($validator->fails()){
+            return response()->json($validator->errors(), 422);
+        }
         $pergunta = Models\Pergunta::find($request->pergunta_id);
         if(!$pergunta){
             return response()->json("Pergunta não encontrada!", 404);
@@ -299,14 +305,19 @@ class FormularioController extends Controller
         'localizacao_analise' => 'required|max:255',
         'referencias_proximas' => 'required|max:255',
         'panorama' => 'required|max:255',
-        'logo_empresa' => 'required|file',
-        'logo_cliente' => 'required|file',
+        'logo_empresa' => 'required|image|mimes:jpg,jpeg,png|max:20480',
+        'logo_cliente' => 'required|image|mimes:jpg,jpeg,png|max:20480',
+        'imagem_area' => 'nullable|image|mimes:jpg,jpeg,png|max:20480',
     ], 
     [
         'required' => 'O campo :attribute é obrigatório.',
         'max' => 'O campo :attribute deve ter no máximo :max caracteres.',
-        'logo_empresa.file' => 'Você precisa enviar o arquivo da logo da empresa.',
-        'logo_cliente.file' => 'Você precisa enviar o arquivo da logo do cliente.',
+        'logo_empresa.image' => 'A logo da empresa deve ser uma imagem JPG ou PNG.',
+        'logo_cliente.image' => 'A logo do cliente deve ser uma imagem JPG ou PNG.',
+        'imagem_area.image' => 'A imagem da área deve ser JPG ou PNG.',
+        'logo_empresa.mimes' => 'A logo da empresa deve ser uma imagem JPG ou PNG.',
+        'logo_cliente.mimes' => 'A logo do cliente deve ser uma imagem JPG ou PNG.',
+        'imagem_area.mimes' => 'A imagem da área deve ser JPG ou PNG.',
     ]);
 
     // ✅ PREPARAR DADOS - MANTENHA COMO ESTÁ
@@ -715,8 +726,9 @@ public function gerar_pptx_isolado(Request $request)
             'localizacao_analise' => 'required|max:255',
             'referencias_proximas' => 'required|max:255',
             'panorama' => 'required|max:255',
-            'logo_empresa' => 'required|file',
-            'logo_cliente' => 'required|file',
+            'logo_empresa' => 'required|image|mimes:jpg,jpeg,png|max:20480',
+            'logo_cliente' => 'required|image|mimes:jpg,jpeg,png|max:20480',
+            'imagem_area' => 'nullable|image|mimes:jpg,jpeg,png|max:20480',
         ]);
 
         Log::info('✅ Validação concluída');
