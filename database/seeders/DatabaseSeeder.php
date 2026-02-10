@@ -34,5 +34,13 @@ class DatabaseSeeder extends Seeder
             'email' => 'mateusmald@gmail.com',
             'whatsapp' => '21974679898',            
         ]);
+         User::create([
+            'nome' => 'Tester',
+            'atribuicao' => 'administrador',
+            'cpf_cnpj' => '146.647.217-08',
+            'email' => 'teste@gmail.com',
+            'whatsapp' => '21974679898', 
+            'senha' => bcrypt('123123'),         
+        ]);
     }
 }
