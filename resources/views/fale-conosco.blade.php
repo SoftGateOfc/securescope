@@ -3,7 +3,7 @@
 
 <!-- HERO SECTION COM FORMULÁRIO -->
 <section class="w-full min-h-screen bg-white py-16 px-6">
-    <div class="max-w-8xl mx-auto">
+    <div class="w-full max-w-7xl mx-auto">
         <div class="grid lg:grid-cols-2 gap-10 items-center">
             
             <!-- LADO ESQUERDO - CONTEÚDO -->
@@ -43,8 +43,8 @@
             </div>
 
             <!-- LADO DIREITO - FORMULÁRIO -->
-            <div class="order-2 lg:order-2 flex justify-center mr-[8%] lg:mt-20 lg:ml-[25%] ">
-                <div class="bg-white rounded-2xl shadow-2xl p-8 lg:p-8 w-96 ">
+            <div class="order-2 lg:order-2 flex justify-center lg:mr-[8%] lg:mt-20 lg:ml-[35%]">
+                <div class="bg-white rounded-2xl shadow-2xl p-8 lg:p-8 w-full max-w-sm lg:w-96">
                     <div class="text-center">
                     <h2 class="text-3xl font-bold text-sky-400 mb-3">Fale Conosco</h2>
                     </div>
@@ -52,7 +52,17 @@
 
                     <form id="form-contato" novalidate class="space-y-4">
                         @csrf
-                        
+
+                          <!--  HONEYPOT evitar bots de sobrecarregarem o site -->
+                            <input 
+                                type="text" 
+                                name="website" 
+                                id="website"
+                                style="position: absolute; left: -9999px; width: 1px; height: 1px;"
+                                tabindex="-1"
+                                autocomplete="off"
+                            >
+                                                
                         <!-- NOME -->
                         <div>
                             <label for="nome" class="block   mb-2">Nome</label>
@@ -99,7 +109,7 @@
                                 type="tel" 
                                 id="telefone" 
                                 name="telefone"
-                                placeholder="+55 021 555555 555"
+                                placeholder=" (21) 555555 555"
                                 class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none transition"
                                 required
                             >

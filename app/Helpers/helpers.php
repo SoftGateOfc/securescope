@@ -118,6 +118,23 @@ function enviar_email($email_destinatario, $assunto, $html)
     }
 }
 
+function enviar_email_solicitacao_acesso($dados)
+{
+    $html = view('email.solicitacao-acesso', [
+        'nome'      => $dados['nome'],
+        'empresa'   => $dados['empresa'],
+        'email'     => $dados['email'],
+        'telefone'  => $dados['telefone'],
+        'data_hora' => date('d/m/Y \à\s H:i:s')
+    ])->render();
+
+    return enviar_email(
+        env('EMAIL_DESTINO_SOLICITACOES'),
+        ' Nova Solicitação de Acesso - Secure Scope',
+        $html
+    );
+}
+
 function nome_mes($numero){
     $meses = [
         '01' => 'janeiro',

@@ -2,7 +2,7 @@
 <footer id="contato" class="w-full bg-slate-900 text-white py-10">
     <div class="w-full px-12">
         <!-- Grid Principal -->
-        <div class="grid grid-cols-1 md:grid-cols-6 gap-6 mb-5">
+        <div class="grid grid-cols-1 md:grid-cols-5 gap-6 mb-10 lg:mb-2">
             
             <!-- Coluna 1 - Logo e Descrição -->
             <div class="md:col-span-2 pt-1">
@@ -18,12 +18,6 @@
                 
                 <!-- Linha abaixo da descrição -->
                 <div class="border-t border-white mt-4"></div>
-            </div>
-
-            <!-- Coluna 2 - Fale Conosco -->
-            <div class="pt-6">
-                <h4 class="text-2xl font-bold mb-3 text-white">Fale conosco</h4>
-                <p class="text-white">contato@securescope.com.br</p>
             </div>
 
             <!-- Coluna 3 - Segmentos -->
@@ -56,9 +50,12 @@
                 </ul>
             </div>
         </div>
-
+        <div class="mb-6">
+                <h4 class="text-2xl font-bold mb-2 text-white">Fale conosco</h4>
+                <p class="text-white">contato@securescope.com.br</p>
+        </div>
         <!-- Copyright -->
-        <div class="text-left">
+        <div class="lg:text-center">
             <p class="text-gray-300">
                 © 2026 Secure Scope. Todos os direitos reservados.
             </p>

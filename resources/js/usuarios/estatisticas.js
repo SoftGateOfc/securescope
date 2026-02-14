@@ -41,6 +41,11 @@ function quebrarTextoEmLinhas(texto, maxCaracteres = 20) {
     return linhas;
 }
 
+// Função auxiliar para detectar se está em mobile
+function isMobile() {
+    return window.innerWidth <= 768;
+}
+
 $(document).ready(function(){
     axios.get(app_url+'/usuarios/estatisticas')
         .then(response => {
@@ -669,6 +674,13 @@ const cores = [
     '#3b8eed',
     '#00BFFF'  
 ];
+
+     const mobile = isMobile();
+    
+    // Ajustar configurações baseado no tamanho da tela
+    const fontSizeLabel = mobile ? 11 : 14;
+    const maxCaracteresPorLinha = mobile ? 10 : 12;
+    const paddingLabel = mobile ? 8 : 6;
     
     
     grafico_topicos_instance = new Chart(ctx, {
@@ -697,7 +709,16 @@ const cores = [
                             return 'Riscos: ' + context.parsed.y;
                         }
                     }
-                }
+                },
+                  layout: {
+                    padding: {
+                        left: mobile ? 5 : 10,
+                        right: mobile ? 5 : 10,
+                        top: 10,
+                        bottom: mobile ? 10 : 5
+                    }
+    }
+                
             },
             scales: {
                 y: {
@@ -712,7 +733,7 @@ const cores = [
                         }
                     }
                 },
-              x: {
+             x: {
                     grid: {
                         display: false
                     },
@@ -721,18 +742,20 @@ const cores = [
                         maxRotation: 0,
                         minRotation: 0,
                         font: {
-                            size: 11
+                            size: fontSizeLabel,         
+                            family: 'Archivo'            
                         },
                         color: '#6b7280',
                         align: 'center',   
-                        padding: 6,
+                        padding: paddingLabel,            
                         
                         callback: function(value, index) {
                             const label = this.getLabelForValue(value);
-                            return quebrarTextoEmLinhas(label, 12);  
+                            return quebrarTextoEmLinhas(label, maxCaracteresPorLinha);  
                         }
                     }
                 }
+                
             }
         }
     });

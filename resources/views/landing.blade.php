@@ -148,7 +148,7 @@
 
 <!-- FORTALECENDO DECISÕES TÉCNICAS -->
 <section id="segmentos" class="relative flex justify-center py-8 bg-white">
-    <!-- FUNDO GRADIENTE (quase do tamanho do card) -->
+    <!-- FUNDO GRADIENTE -->
     <div class="w-full max-w-[1280px] px-[6px] bg-white rounded-3xl">
         <!-- CONTEÚDO -->
         <div class="rounded-3xl px-10 py-16">
@@ -156,28 +156,31 @@
                 <h2 class="text-5xl md:text-5xl lg:text-5xl font-bold text-gray-900 max-w-xl leading-tight text-center lg:text-left">
                     Fortalecendo Decisões Técnicas em Ambientes Críticos
                 </h2>
-                <div class="flex flex-col items-center gap-10 text-gray-900 font-semibold">
-                    <div class="flex items-center gap-14">
+               <div class="flex flex-col items-center gap-10 text-gray-900 font-semibold">
+                <div class="flex flex-col lg:items-center gap-6">
+                    <div class="flex flex-col lg:flex-row items-center gap-6 lg:gap-14">
                         <div class="flex items-center gap-3">
-                            <img 
+                            <img
                                 src="/imagesHomePage/PNG/Landing/IconeConsultoriasdeSegurança.png"
-                                class="w-8 h-8 object-contain" >
+                                class="w-8 h-8 object-contain">
                             <span class="text-2xl">Consultorias de Segurança</span>
                         </div>
                         <div class="flex items-center gap-3">
-                            <img 
+                            <img
                                 src="/imagesHomePage/PNG/Landing/IconeIndústriaseInfraestrutura.png"
-                                class="w-8 h-8 object-contain" >
+                                class="w-8 h-8 object-contain">
                             <span class="text-2xl">Indústrias e Infraestrutura</span>
                         </div>
                     </div>
                     <div class="flex items-center gap-3">
-                        <img 
-                                src="/imagesHomePage/PNG/Landing/IconePortoseLogística.png"
-                                class="w-8 h-8 object-contain" >
+                        <img
+                            src="/imagesHomePage/PNG/Landing/IconePortoseLogística.png"
+                            class="w-8 h-8 object-contain">
                         <span class="text-2xl">Portos e Logística</span>
                     </div>
                 </div>
+
+            </div>
             </div>
         </div>
     </div>
@@ -190,24 +193,26 @@
 <section id="como-funciona" class="w-full bg-white py-20">
     <div class="max-w-7xl mx-auto px-6">
         <div class="grid lg:grid-cols-2 gap-16 items-start">
-           <div class="bg-white rounded-2xl shadow-xl p-4 w-fit mx-auto">
-            <img 
-                src="/imagesHomePage/PNG/Landing/ImagemEstrutureinspeções.png"
-                alt="Preview de Inspeção"
-                class="rounded-xl w-full max-h-[500px] object-contain mx-auto"
-            >
-        </div>
-            <div>
+           <div class="bg-white rounded-2xl shadow-xl p-4 w-fit mx-auto order-2 lg:order-1 lg:row-span-2">
+                <img
+                    src="/imagesHomePage/PNG/Landing/ImagemEstrutureinspeções.png"
+                    alt="Preview de Inspeção"
+                    class="rounded-xl w-full max-h-[500px] object-contain mx-auto"
+                >
+            </div>
+            <div class="order-1 lg:order-2">
                 <h2 class="text-5xl font-bold text-gray-900 mb-10">
                     Estruture inspeções e análises com mais eficiência
                 </h2>
-                
+
                 <p class="text-lg md:text-2xl text-gray-600 ">
-                    Organize inspeções de forma padronizada, consolide avaliações 
-                    técnicas e transforme dados de campo em informações claras 
+                    Organize inspeções de forma padronizada, consolide avaliações
+                    técnicas e transforme dados de campo em informações claras
                     para apoiar decisões com mais precisão e menos retrabalho.
                 </p>
-                <div class="border-t-2  border-gray-300 pt-10 mt-10">
+            </div>
+            <div class="order-3 lg:order-3">
+                <div class="border-t-2  border-gray-300 pt-10">
 
                     <div class="grid md:grid-cols-2 gap-10 mt-10">
 
@@ -265,38 +270,36 @@
                 <div class="w-full h-px border-gray-300 mb-10 border-1  "></div>
 
                 <!-- MÉTRICAS -->
-                <div class="grid grid-cols-2 gap-10 ">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-10">
 
                     <div class="rounded-xl p-6">
-                    <div class="relative w-28 h-28 rounded-full 
-                                    bg-[conic-gradient(theme(colors.sky.400)_40%,theme(colors.gray.200)_0)] 
-                                    flex items-center justify-center mb-4">
-
-                            <div class="w-22 h-22 bg-white rounded-full flex items-center justify-center">
-                                <span class="text-3xl font-bold text-sky-400">
-                                    -40%
-                                </span>
+                        <div class="flex flex-row sm:flex-col items-left gap-4 sm:gap-0">
+                            <div class="relative w-28 h-28 shrink-0 rounded-full 
+                                        bg-[conic-gradient(theme(colors.sky.400)_40%,theme(colors.gray.200)_0)] 
+                                        flex items-center justify-center sm:mb-4">
+                                <div class="w-22 h-22 bg-white rounded-full flex items-center justify-center">
+                                    <span class="text-3xl font-semibold text-sky-400">-40%</span>
+                                </div>
                             </div>
+                            <p class="text-gray-700 font-medium md:text-xl">
+                                Tempo gasto na consolidação das análises
+                            </p>
                         </div>
-                        <p class="text-gray-700 font-medium md:text-xl">
-                            Tempo gasto na consolidação das análises
-                        </p>
                     </div>
 
-                    <div class="bg-white rounded-xl p-6 ">
-                       <div class="relative w-28 h-28 rounded-full 
-                                    bg-[conic-gradient(theme(colors.sky.400)_55%,theme(colors.gray.200)_0)] 
-                                    flex items-center justify-center mb-4">
-
-                            <div class="w-22 h-22 bg-white rounded-full flex items-center justify-center">
-                                <span class="text-3xl font-bold text-sky-400">
-                                    +55%
-                                </span>
+                    <div class="bg-white rounded-xl p-6">
+                        <div class="flex flex-row sm:flex-col items-left gap-4 sm:gap-0">
+                            <div class="relative w-28 h-28 shrink-0 rounded-full 
+                                        bg-[conic-gradient(theme(colors.sky.400)_55%,theme(colors.gray.200)_0)] 
+                                        flex items-center justify-center sm:mb-4">
+                                <div class="w-22 h-22 bg-white rounded-full flex items-center justify-center">
+                                    <span class="text-3xl font-semibold text-sky-400">+55%</span>
+                                </div>
                             </div>
+                            <p class="text-gray-700 font-medium md:text-xl">
+                                Clareza na priorização dos riscos
+                            </p>
                         </div>
-                        <p class="text-gray-700 font-medium md:text-xl">
-                            Clareza na priorização dos riscos
-                        </p>
                     </div>
 
                 </div>
@@ -392,7 +395,7 @@
         </div>
 
         <!-- RECURSO 3 -->
-        <div class="bg-blue-100 rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all">
+       <div class="bg-blue-100 rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all">
 
             <h3 class="text-2xl font-bold text-gray-900 mb-3">
                 Gestão de equipe
@@ -403,66 +406,49 @@
             </p>
 
             <div class="space-y-4 text-sm">
-                <div class="flex items-center justify-between gap-3 p-3.5 bg-white rounded-lg">
-                    <div class="flex">
-                        <div class="bg-sky-400 w-10 h-10 rounded-full flex items-center justify-center text-white font-bold">AN</div>
+                <div class="flex items-center justify-between gap-2 p-3.5 bg-white rounded-lg">
+                    <div class="flex items-center">
+                        <div class="bg-sky-400 w-9 h-9 sm:w-10 sm:h-10 shrink-0 rounded-full flex items-center justify-center text-white font-bold text-sm">AN</div>
                         <div class="ml-2">
-                            <p class="font-semibold text-gray-900 text-base">Ana Ribeiro</p>
-                            <p class="text-gray-500">Analista</p>
+                            <p class="font-semibold text-gray-900 text-sm sm:text-base">Ana Ribeiro</p>
+                            <p class="text-gray-500 text-xs sm:text-sm">Analista</p>
                         </div>
                     </div>
-                        <div class="flex">
-                           <img 
-                                src="/imagesHomePage/PNG/Landing/IconeOlho.png"
-                                class="w-10 h-5 object-contain mt"
-                            >  
-                             <img 
-                                    src="/imagesHomePage/PNG/Landing/IconeEditar.png"
-                                    class="w-10 h-5 object-contain mt-1"
-                            > 
-                        </div>
+                    <div class="flex shrink-0 gap-1">
+                        <img src="/imagesHomePage/PNG/Landing/IconeOlho.png" class="w-7 sm:w-10 h-5 object-contain">
+                        <img src="/imagesHomePage/PNG/Landing/IconeEditar.png" class="w-7 sm:w-10 h-5 object-contain mt-1">
+                    </div>
                 </div>
 
-                <div class="flex items-center justify-between gap-3 p-3.5 bg-white rounded-lg">
-                    <div class="flex">
-                        <div class="bg-sky-400 w-10 h-10 rounded-full flex items-center justify-center text-white font-bold">CM</div>
+                <div class="flex items-center justify-between gap-2 p-3.5 bg-white rounded-lg">
+                    <div class="flex items-center">
+                        <div class="bg-sky-400 w-9 h-9 sm:w-10 sm:h-10 shrink-0 rounded-full flex items-center justify-center text-white font-bold text-sm">CM</div>
                         <div class="ml-2">
-                            <p class="font-semibold text-gray-900 text-base">Carlos Menezes</p>
-                            <p class="text-gray-500">Consultor</p>
+                            <p class="font-semibold text-gray-900 text-sm sm:text-base">Carlos Menezes</p>
+                            <p class="text-gray-500 text-xs sm:text-sm">Consultor</p>
                         </div>
                     </div>
-                        <div class="flex">
-                           <img 
-                                src="/imagesHomePage/PNG/Landing/IconeOlho.png"
-                                class="w-10 h-5 object-contain mt"
-                            >  
-                             <img 
-                                    src="/imagesHomePage/PNG/Landing/IconeEditar.png"
-                                    class="w-10 h-5 object-contain mt-1"
-                            > 
-                        </div>
+                    <div class="flex shrink-0 gap-1">
+                        <img src="/imagesHomePage/PNG/Landing/IconeOlho.png" class="w-7 sm:w-10 h-5 object-contain">
+                        <img src="/imagesHomePage/PNG/Landing/IconeEditar.png" class="w-7 sm:w-10 h-5 object-contain mt-1">
+                    </div>
                 </div>
 
-                <div class="flex items-center justify-between gap-3 p-3.5 bg-white rounded-lg">
-                    <div class="flex">
-                        <div class="bg-sky-400 w-10 h-10 rounded-full flex items-center justify-center text-white font-bold">MF</div>
+                <div class="flex items-center justify-between gap-2 p-3.5 bg-white rounded-lg">
+                    <div class="flex items-center">
+                        <div class="bg-sky-400 w-9 h-9 sm:w-10 sm:h-10 shrink-0 rounded-full flex items-center justify-center text-white font-bold text-sm">MF</div>
                         <div class="ml-2">
-                            <p class="font-semibold text-gray-900 text-base">Mariana Fontes</p>
-                            <p class="text-gray-500">Coordenadora </p>
+                            <p class="font-semibold text-gray-900 text-sm sm:text-base">Mariana Fontes</p>
+                            <p class="text-gray-500 text-xs sm:text-sm">Coordenadora</p>
                         </div>
                     </div>
-                        <div class="flex">
-                           <img 
-                                src="/imagesHomePage/PNG/Landing/IconeOlho.png"
-                                class="w-10 h-5 object-contain mt"
-                            >  
-                             <img 
-                                    src="/imagesHomePage/PNG/Landing/IconeEditar.png"
-                                    class="w-10 h-5 object-contain mt-1"
-                            > 
-                        </div>
+                    <div class="flex shrink-0 gap-1">
+                        <img src="/imagesHomePage/PNG/Landing/IconeOlho.png" class="w-7 sm:w-10 h-5 object-contain">
+                        <img src="/imagesHomePage/PNG/Landing/IconeEditar.png" class="w-7 sm:w-10 h-5 object-contain mt-1">
                     </div>
                 </div>
+
+            </div>
         </div>
 
         <!-- RECURSO 4 -->
@@ -473,50 +459,43 @@
             <p class="text-gray-600 mb-4 font-medium md:text-xl">
             Registre e classifique vulnerabilidades identificadas durante inspeções.
             </p>
-            <div class="space-y-3 text-sm">
+           <div class="space-y-3 text-sm">
                 <div class="border border-gray-200 rounded-lg p-3 bg-white">
                     <div class="flex justify-between items-start mb-2">
                         <p class="font-semibold text-gray-600">Tópico</p>
                         <p class="font-semibold text-gray-600">Risco</p>
                         <p class="font-semibold text-gray-600">Prioridade</p>
-                      
                     </div>
                     <div class="flex justify-between items-start mb-2">
-                        <p class="font-semibold text-base text-gray-900">CFTV</p>
-                        <p class="font-semibold text-base text-gray-900 ml-2 ">Alto</p>
-                        <p class="font-semibold text-base text-gray-900">Curto Prazo</p>
-                      
+                        <p class="font-semibold text-xs sm:text-base text-gray-900">CFTV</p>
+                        <p class="font-semibold text-xs sm:text-base text-gray-900">Alto</p>
+                        <p class="font-semibold text-xs sm:text-base text-gray-900">Curto Prazo</p>
                     </div>
-                      <div class="flex justify-between items-start mb-2">
-                        <p class=" text-gray-600">ID: 23012026</p>
-                      <img 
-                        src="/imagesHomePage/PNG/Landing/LinhaCurtoPrazo.png"
-                        class="w-15 h-5 object-contain mt-1"
-                    >
+                    <div class="flex justify-between items-start mb-2">
+                        <p class="text-xs sm:text-sm text-gray-600">ID: 23012026</p>
+                        <img 
+                            src="/imagesHomePage/PNG/Landing/LinhaCurtoPrazo.png"
+                            class="w-15 h-5 object-contain mt-1">
                     </div>
-                       
                 </div>
+
                 <div class="border border-gray-200 rounded-lg p-3 bg-white">
                     <div class="flex justify-between items-start mb-2">
                         <p class="font-semibold text-gray-600">Tópico</p>
                         <p class="font-semibold text-gray-600">Risco</p>
                         <p class="font-semibold text-gray-600">Prioridade</p>
-                      
                     </div>
                     <div class="flex justify-between items-start mb-2">
-                        <p class="font-semibold text-base text-gray-900">Treinamento</p>
-                        <p class="font-semibold text-base text-gray-900 mr-3 ">Médio</p>
-                        <p class="font-semibold text-base text-gray-900">Médio Prazo</p>
-                      
+                        <p class="font-semibold text-xs sm:text-base text-gray-900">Treinamento</p>
+                        <p class="font-semibold text-xs sm:text-base text-gray-900">Médio</p>
+                        <p class="font-semibold text-xs sm:text-base text-gray-900">Médio Prazo</p>
                     </div>
-                      <div class="flex justify-between items-start mb-2">
-                        <p class=" text-gray-600">ID: 02022026</p>
-                      <img 
-                        src="/imagesHomePage/PNG/Landing/LinhaMedioPrazo.png"
-                        class="w-15 h-5 object-contain mt-1"
-                    >
+                    <div class="flex justify-between items-start mb-2">
+                        <p class="text-xs sm:text-sm text-gray-600">ID: 02022026</p>
+                        <img 
+                            src="/imagesHomePage/PNG/Landing/LinhaMedioPrazo.png"
+                            class="w-15 h-5 object-contain mt-1">
                     </div>
-                       
                 </div>
             </div>
         </div>

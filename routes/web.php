@@ -18,6 +18,10 @@ Route::get('/fale-conosco', function(){
     return view('fale-conosco');
 })->name('fale-conosco');
 
+Route::post('/fale-conosco/enviar', [Controllers\ContatoController::class, 'enviar'])
+    ->middleware('throttle:3,10')
+    ->name('fale-conosco.enviar');
+
 // Rota de login 
 Route::get('/login', function(){
     if(Auth::check()){

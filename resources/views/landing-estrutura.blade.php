@@ -11,11 +11,11 @@
     @vite(['resources/css/app.css', 'resources/css/landing.css'])
 </head>
 
-<body class="antialiased overflow-x-hidden">
+<body class="antialiased overflow-x-hidden ">
 
     @include('components.navbar')
 
-    <main>
+   <main class="pt-[73px]">
         @yield('conteudo')
     </main>
 

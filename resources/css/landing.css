@@ -44,11 +44,14 @@ li, ul, ol, table, td, th {
 /* ==========================================
    SMOOTH SCROLLING E NAVEGAÇÃO
    ========================================== */
-
 html {
+    overflow-x: clip; 
     scroll-behavior: smooth;
 }
 
+body {
+    overflow-x: hidden;
+}
 section {
     scroll-margin-top: 80px;
 }
