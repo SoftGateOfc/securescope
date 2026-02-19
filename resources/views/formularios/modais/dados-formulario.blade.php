@@ -2,7 +2,7 @@
     <p id="titulo_pergunta" class="titulo">PERGUNTA</p>
     <div class="dados-formulario-sessao">
         <p class="classe-opcao">Nível de adequação identificado na inspeção</p>
-        <ol class="opcoes mt-4 flex items-center">
+        <ol class="opcoes mt-4  flex items-center">
             <li class="relative w-full mb-6">
                 <div class="mb-7">
                     <h3 class="font-medium text-gray-900">Atende plenamente</h3>
