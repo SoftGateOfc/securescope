@@ -129,7 +129,7 @@ function enviar_email_solicitacao_acesso($dados)
     ])->render();
 
     return enviar_email(
-        env('EMAIL_DESTINO_SOLICITACOES'),
+                env('EMAIL_DESTINO_SOLICITACOES'),
         ' Nova Solicitação de Acesso - Secure Scope',
         $html
     );
@@ -162,7 +162,7 @@ function validar_cnpj($cnpj) {
         return false;
     }
 
-    // Evita CNPJs com todos os números iguais (ex.: 00000000000000)
+    // Evita CNPJs com todos os números iguais 
     if (preg_match('/(\d)\1{13}/', $cnpj)) {
         return false;
     }

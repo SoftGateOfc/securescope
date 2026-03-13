@@ -85,7 +85,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     telefone.addEventListener("blur", () => {
         !isPhoneValid(telefone.value)
-            ? showError(telefone, "Formato: (81) 99999-9999")
+            ? showError(telefone, "Formato: (XX) 99999-9999")
             : clearError(telefone);
     });
 
