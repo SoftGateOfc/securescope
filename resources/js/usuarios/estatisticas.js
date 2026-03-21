@@ -65,7 +65,7 @@ $(document).ready(function(){
             let porcentagem_vulnerabilidades = dados.percentual_vulnerabilidades;
             $("#icone_card_vulnerabilidades").html(direcao_seta_invertida(porcentagem_vulnerabilidades));
             $("#numero_absoluto_card_vulnerabilidades").html(total_vulnerabilidades_geral.toLocaleString());
-            $("#numero_relatorio_card_vulnerabilidades").html(apresentacao_porcentagem_vulnerabilidades(porcentagem_vulnerabilidades));
+            $("#numero_relatorio_card_vulnerabilidades").html(apresentacao_porcentagem_projetos(porcentagem_vulnerabilidades));
             
             // RISCOS
             let qtd_riscos = dados.qtd_riscos_mes;
@@ -73,7 +73,7 @@ $(document).ready(function(){
             let porcentagem_riscos = dados.percentual_riscos;
             $("#icone_card_riscos").html(direcao_seta_invertida(porcentagem_riscos));
             $("#numero_absoluto_card_riscos").html(total_riscos_geral.toLocaleString());
-            $("#numero_relatorio_card_riscos").html(apresentacao_porcentagem_vulnerabilidades(porcentagem_riscos));
+            $("#numero_relatorio_card_riscos").html(apresentacao_porcentagem_projetos   (porcentagem_riscos));
             
             // RECOMENDAÇÕES
             let qtd_recomendacoes = dados.qtd_recomendacoes_mes;
@@ -180,28 +180,14 @@ function direcao_seta_invertida(numero) {
 }
 
 function apresentacao_porcentagem_projetos(numero) {
-    let valor_absoluto = Math.abs(numero).toFixed(2);
-    
-    if (numero > 0) {
-        return `<span class="text-green-600">${valor_absoluto}%</span> <span class="text-gray-500">a mais que o mês anterior</span>`;
-    } else if (numero < 0) {
-        return `<span class="text-red-600">${valor_absoluto}%</span> <span class="text-gray-500">a menos que o mês anterior</span>`;
-    } else {
-        return `<span class="text-gray-500">Igual ao mês anterior</span>`;
-    }
+    let valor = Math.abs(numero).toFixed(2);
+    if (numero > 0) return `<img src="${window.app_url}/images/Seta_alto.png" alt="↑" class="w-3 h-3 inline"> <span class="text-green-600">${valor}%</span>`;
+    if (numero < 0) return `<img src="${window.app_url}/images/Seta_baixo.png" alt="↓" class="w-3 h-3 inline"> <span class="text-red-600">${valor}%</span>`;
+    return `<span class="text-gray-400">—</span>`;
 }
 
-function apresentacao_porcentagem_vulnerabilidades(numero) {
-    let valor_absoluto = Math.abs(numero).toFixed(2);
-    
-    if (numero > 0) {
-        return `<span class="text-red-600">${valor_absoluto}%</span> <span class="text-gray-500">a mais que o mês anterior</span>`;
-    } else if (numero < 0) {
-        return `<span class="text-green-600">${valor_absoluto}%</span> <span class="text-gray-500">a menos que o mês anterior</span>`;
-    } else {
-        return `<span class="text-gray-500">Igual ao mês anterior</span>`;
-    }
-}
+
+
 function atualizarEstiloBotoes() {
     $('#btn_projetos').toggleClass('ativo', modoAtualGrafico === 'projetos');
     $('#btn_riscos').toggleClass('ativo', modoAtualGrafico === 'riscos');

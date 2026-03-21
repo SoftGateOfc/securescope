@@ -67,7 +67,31 @@
     }
 }
 
-#online{
-    position:fixed;
-    margin-top: -50px;
+#online {
+    position: fixed;
+    top: 18px;
+    left: 92%;
+    transform: translateX(-50%);
+    z-index: 60;
+    padding: 4px;
+    border-radius: 20px;
+    border: 2px solid #16a34a;
+    background-color: #ffffff;
+    font-size: 0.75rem;
+    font-weight: bold;
+    text-align: center;
+    min-width: 120px;
+    transition: background-color 0.3s, border-color 0.3s;
+}
+
+#online.offline {
+    border-color: #dc2626;     
+    background-color: #ffffff;
+    
+}
+
+#online.online-ativo {
+    border-color: #16a34a;     
+    background-color: #ffffff;
+    
 }

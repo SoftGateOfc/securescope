@@ -67,11 +67,14 @@ class ProjetoController extends Controller
         return response()->json('Projeto editado com sucesso!', 200);
     }
 
-    public function detalhes($usuario_id){
-        return Models\Projeto::with([
-            'tipos_empreendimentos.tipo_empreendimento',
-            'usuarios.usuario'
-        ])
-        ->find($usuario_id);
+    public function detalhes($projeto_id){
+       $projeto = Models\Projeto::with([
+        'tipos_empreendimentos.tipo_empreendimento',
+        'usuarios.usuario'
+        ])->find($projeto_id);
+        if(!$projeto || $projeto->empresa_id != session('empresa_id')){
+            abort(403);
+        }
+        return $projeto;
     }
 }

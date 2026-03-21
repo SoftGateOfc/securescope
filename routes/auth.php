@@ -17,7 +17,7 @@ Route::middleware(['auth'])->group(function() {
     Route::controller(Controllers\EmpresaController::class)->group(function(){
         Route::prefix('empresas')->group(function(){
             Route::get('/', 'index')->can('administrador', App\Models\User::class);
-            Route::get('lista', 'lista');
+            Route::get('lista', 'lista')->can('administrador', App\Models\User::class);
             Route::post('adicionar', 'adicionar')->can('administrador', App\Models\User::class);
             Route::put('editar/{id}', 'editar')->can('administrador', App\Models\User::class);
             Route::get('detalhes/{id}', 'detalhes')->can('administrador', App\Models\User::class);
@@ -101,7 +101,7 @@ Route::middleware(['auth'])->group(function() {
     Route::controller(Controllers\UsuarioController::class)->group(function(){
         Route::prefix('usuarios')->group(function(){
             Route::get('/', 'index')->can('administrador', App\Models\User::class);
-            Route::get('lista', 'lista');
+            Route::get('lista', 'lista')->can('administrador', App\Models\User::class);
             Route::post('adicionar', 'adicionar')->can('administrador', App\Models\User::class);
             Route::put('editar/{id}', 'editar')->can('administrador', App\Models\User::class);
             Route::get('detalhes/{id}', 'detalhes')->can('administrador', App\Models\User::class);

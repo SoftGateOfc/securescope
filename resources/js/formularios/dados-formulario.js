@@ -343,18 +343,19 @@ function verificarConexao() {
     axios.get(app_url+"/online")
     .then(response => {
         online = true;
-        $("#online").removeClass("bg-red-100");
-        $("#online").addClass("bg-green-100");
+        $("#online").removeClass("offline");
+        $("#online").addClass("online-ativo");
         $("#online").html("ONLINE");
         sincronizarRespostasOffline();        
     })
     .catch(error => {
         online = false;
-        $("#online").removeClass("bg-green-100");
-        $("#online").addClass("bg-red-100");
+        $("#online").removeClass("online-ativo");
+        $("#online").addClass("offline");
         $("#online").html("OFFLINE");                
     })    
 }
+
 
 setInterval(function () {
     verificarConexao();

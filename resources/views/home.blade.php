@@ -18,11 +18,9 @@
         </div>
         
         <!-- PORCENTAGEM COM SETA E TEXTO -->
-        <div class="flex items-center gap-2">
-            <i id="icone_card_projetos" class="estatisticas_load text-lg"></i>
-            <span id="numero_relatorio_card_projetos" class="text-sm font-medium  estatisticas_load">
-                0
-            </span>
+       <div class="flex items-center gap-2">
+            <span class="text-gray-500 text-sm">Mês Atual vs Mês Anterior: </span>
+            <span id="numero_relatorio_card_projetos" class="estatisticas_load"></span>
         </div>
     </a>
     <a class="w-full md:w-[22%] card-dashboard-branco block p-3 bg-white border border-gray-200 rounded-lg shadow-sm hover:bg-gray-100">
@@ -43,10 +41,8 @@
     
     <!-- PORCENTAGEM COM SETA E TEXTO -->
     <div class="flex items-center gap-2">
-        <i id="icone_card_vulnerabilidades" class="estatisticas_load text-lg"></i>
-        <span id="numero_relatorio_card_vulnerabilidades" class="text-sm font-medium estatisticas_load">
-            0
-        </span>
+        <span class="text-gray-500 text-sm">Mês Atual vs Mês Anterior: </span>
+        <span id="numero_relatorio_card_vulnerabilidades" class="estatisticas_load"></span>
     </div>
 </a>
     <a class="w-full md:w-[22%] card-dashboard-branco block p-3 bg-white border border-gray-200 rounded-lg shadow-sm hover:bg-gray-100">
@@ -66,12 +62,10 @@
         </div>
         
         <!-- PORCENTAGEM COM SETA E TEXTO -->
-        <div class="flex items-center gap-2">
-            <i id="icone_card_riscos" class="estatisticas_load text-lg"></i>
-            <span id="numero_relatorio_card_riscos" class="text-sm font-medium estatisticas_load">
-                0
-            </span>
-        </div>
+    <div class="flex items-center gap-2">
+        <span class="text-gray-500 text-sm">Mês Atual vs Mês Anterior: </span>
+        <span id="numero_relatorio_card_riscos" class="estatisticas_load"></span>
+    </div>
     </a>
     <a class="w-full md:w-[22%] card-dashboard-branco block p-3 bg-white border border-gray-200 rounded-lg shadow-sm hover:bg-gray-100">
      
@@ -92,11 +86,9 @@
         </div>
         
         <!-- PORCENTAGEM COM SETA E TEXTO -->
-        <div class="flex items-center gap-2">
-            <i id="icone_card_recomendacoes" class="estatisticas_load text-lg"></i>
-            <span id="numero_relatorio_card_recomendacoes" class="text-sm font-medium estatisticas_load">
-                0
-            </span>
+            <div class="flex items-center gap-2">
+            <span class="text-gray-500 text-sm">Mês Atual vs Mês Anterior: </span>
+            <span id="numero_relatorio_card_recomendacoes" class="estatisticas_load"></span>
         </div>
     </a>
 </div>

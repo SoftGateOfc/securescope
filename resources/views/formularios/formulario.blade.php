@@ -1,11 +1,7 @@
 @extends('estrutura_principal.estrutura')
 @section('conteudo')
 @vite('resources/css/formulario.css')
-<div class="flex justify-center">
-    <div id="online" class="p-4 mb-4 text-sm rounded-lg" role="alert">
-        <span class="font-medium text-center">ONLINE</span>
-    </div>
-</div>
+<div id="online" role="alert">ONLINE</div>
 
 <h1 id="nome_formulario">Formulário {{ $formulario->nome }}</h1>
 <input id="formulario_id" type="hidden" value="{{ $formulario->id }}">
@@ -15,7 +11,7 @@
 </div>
 @if ($errors->any())
     <div class="mb-4 p-4 text-sm text-red-700 bg-red-100 rounded-md">
-        <strong>⛔ Ocorreram erros na geração do relatório:</strong>
+        <strong> Ocorreram erros na geração do relatório:</strong>
         <br>
         <strong>Submeta os arquivos novamente!</strong>
         <ul class="mt-2 list-disc list-inside">

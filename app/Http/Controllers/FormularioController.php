@@ -62,6 +62,9 @@ class FormularioController extends Controller
         if(!$formulario){
             abort('404');
         }
+            if($formulario->empresa_id != session('empresa_id')){
+            abort(403);
+            }
         $tipos_empreendimento_projeto = Models\ProjetoTipoEmpreendimento::where('projeto_id', $formulario->projeto_id)->pluck('tipo_empreendimento_id')->toArray();
         $perguntas_ids = Models\PerguntaTipoEmpreendimento::whereIn('tipo_empreendimento_id', $tipos_empreendimento_projeto)->select('pergunta_id')->groupBy('pergunta_id')->pluck('pergunta_id')->toArray();
         $perguntas = Models\Pergunta::whereIn('id', $perguntas_ids)->orderBy('data_cadastro', 'desc')->get();
@@ -99,12 +102,6 @@ class FormularioController extends Controller
     }
 
     public function responder_pergunta(Request $request){        
-        $validator = Validator::make($request->all(), [
-            'foto' => 'nullable|image|mimes:jpg,jpeg,png|max:20480'
-        ]);
-        if($validator->fails()){
-            return response()->json($validator->errors(), 422);
-        }
         $pergunta = Models\Pergunta::find($request->pergunta_id);
         if(!$pergunta){
             return response()->json("Pergunta não encontrada!", 404);
@@ -229,6 +226,10 @@ class FormularioController extends Controller
     }
 
     public function listar_respostas($formulario_id){
+         $formulario = Models\Formulario::find($formulario_id);
+        if(!$formulario || $formulario->empresa_id != session('empresa_id')){
+            abort(403);
+        }
         $respostas = Models\Resposta::with([
             'usuario',
             'pergunta'
@@ -305,19 +306,14 @@ class FormularioController extends Controller
         'localizacao_analise' => 'required|max:255',
         'referencias_proximas' => 'required|max:255',
         'panorama' => 'required|max:255',
-        'logo_empresa' => 'required|image|mimes:jpg,jpeg,png|max:20480',
-        'logo_cliente' => 'required|image|mimes:jpg,jpeg,png|max:20480',
-        'imagem_area' => 'nullable|image|mimes:jpg,jpeg,png|max:20480',
+        'logo_empresa' => 'required|file',
+        'logo_cliente' => 'required|file',
     ], 
     [
         'required' => 'O campo :attribute é obrigatório.',
         'max' => 'O campo :attribute deve ter no máximo :max caracteres.',
-        'logo_empresa.image' => 'A logo da empresa deve ser uma imagem JPG ou PNG.',
-        'logo_cliente.image' => 'A logo do cliente deve ser uma imagem JPG ou PNG.',
-        'imagem_area.image' => 'A imagem da área deve ser JPG ou PNG.',
-        'logo_empresa.mimes' => 'A logo da empresa deve ser uma imagem JPG ou PNG.',
-        'logo_cliente.mimes' => 'A logo do cliente deve ser uma imagem JPG ou PNG.',
-        'imagem_area.mimes' => 'A imagem da área deve ser JPG ou PNG.',
+        'logo_empresa.file' => 'Você precisa enviar o arquivo da logo da empresa.',
+        'logo_cliente.file' => 'Você precisa enviar o arquivo da logo do cliente.',
     ]);
 
     // ✅ PREPARAR DADOS - MANTENHA COMO ESTÁ
@@ -726,9 +722,8 @@ public function gerar_pptx_isolado(Request $request)
             'localizacao_analise' => 'required|max:255',
             'referencias_proximas' => 'required|max:255',
             'panorama' => 'required|max:255',
-            'logo_empresa' => 'required|image|mimes:jpg,jpeg,png|max:20480',
-            'logo_cliente' => 'required|image|mimes:jpg,jpeg,png|max:20480',
-            'imagem_area' => 'nullable|image|mimes:jpg,jpeg,png|max:20480',
+            'logo_empresa' => 'required|file',
+            'logo_cliente' => 'required|file',
         ]);
 
         Log::info('✅ Validação concluída');

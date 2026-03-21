@@ -18,6 +18,9 @@ class RespostaController extends Controller
         if(!$formulario){
             return response()->json('Formulário não encontrado!', 404);
         }
+        if($formulario->empresa_id != session('empresa_id')){
+            abort(403);
+        }
         $pergunta = Models\Pergunta::find($pergunta_id);
         if(!$pergunta){
             return response()->json('Pergunta não encontrada!', 404);
