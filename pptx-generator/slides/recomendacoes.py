@@ -36,6 +36,10 @@ def add_local_image(slide, image_path, left, top, width, height):
 
 def criar_slide_recomendacoes(pres, dados, itens_slide):
 
+    # Altura por linha: 0.85 se recomendação > 120 chars, senão 0.64
+    alturas_linhas = [0.85 if len(item['recomendacao']) > 120 else 0.64 for item in itens_slide]
+    altura_total_tabela = 0.15 + sum(alturas_linhas)
+
     slide = pres.slides.add_slide(pres.slide_layouts[6])
 
     # === FUNDO BRANCO === #
@@ -96,18 +100,18 @@ def criar_slide_recomendacoes(pres, dados, itens_slide):
         rows, cols,
         Inches(0.25), Inches(1.2),
         Inches(9.05),
-        Inches(0.2 + 0.65 * len(itens_slide))
+        Inches(altura_total_tabela)
     ).table
 
     # Larguras (6 colunas)
-    widths = [0.9, 0.5, 1.95, 2.7 , 2.1, 0.9]
+    widths = [0.9, 0.5, 2.05, 2.6 , 2.1, 0.9]
     for i, w in enumerate(widths):
         table.columns[i].width = Inches(w)
 
     # Alturas
-    table.rows[0].height = Inches(0.3 / 2) 
+    table.rows[0].height = Inches(0.3 / 2)
     for i in range(1, rows):
-        table.rows[i].height = Inches(0.64)
+        table.rows[i].height = Inches(alturas_linhas[i - 1])
 
     # Cabeçalho
     headers = [
@@ -137,12 +141,11 @@ def criar_slide_recomendacoes(pres, dados, itens_slide):
     # Guardar posição da tabela para calcular posições das células
     table_left = Inches(0.3)
     table_top = Inches(1.2)
-    row_height = Inches(0.64)
     header_height = Inches(0.3)
-    
+
     for row_idx, item in enumerate(itens_slide, start=1):
-        # Calcular posição Y desta linha
-        cell_top = table_top + header_height + (row_idx - 1) * row_height
+        # Calcular posição Y desta linha somando alturas anteriores
+        cell_top = table_top + header_height + sum(Inches(alturas_linhas[j]) for j in range(row_idx - 1))
 
         # Alternar cores das linhas
         if row_idx % 2 == 0:
@@ -169,7 +172,7 @@ def criar_slide_recomendacoes(pres, dados, itens_slide):
             if os.path.exists(image_path):
                 slide.shapes.add_picture(
                     image_path,
-                    col_0_left + Inches(0.2),
+                    col_0_left + Inches(0.15),
                     cell_top + Inches(0.1),  
                     width=Inches(0.4)
                 )
@@ -444,11 +447,15 @@ def gerar_recomendacoes(pres, dados):
         }
         itens.append(item)
     
-    # Paginar em grupos de 5
-    itens_por_slide = 5
-    
-    for i in range(0, len(itens), itens_por_slide):
-        lote = itens[i:i + itens_por_slide]
+    # Paginar dinamicamente: 4 itens se alguma recomendação > 120 chars, senão 5
+    slides_criados = 0
+    i = 0
+    while i < len(itens):
+        candidatos = itens[i:i + 5]
+        tem_longa = any(len(item['recomendacao']) > 120 for item in candidatos)
+        lote = itens[i:i + 4] if tem_longa else itens[i:i + 5]
         criar_slide_recomendacoes(pres, dados, lote)
-    
-    print(f"✅ {len(range(0, len(itens), itens_por_slide))} slides de Recomendações criados!", file=sys.stderr, flush=True)
+        i += len(lote)
+        slides_criados += 1
+
+    print(f"✅ {slides_criados} slides de Recomendações criados!", file=sys.stderr, flush=True)

@@ -94,9 +94,13 @@ class FormularioController extends Controller
             $perguntas[$i]->prazo = $prazo; 
             $perguntas[$i]->recomendacao = $recomendacao;            
         }
+        $projeto = Models\Projeto::with('cliente')->find($formulario->projeto_id);
+        $empresa = Models\Empresa::find(session('empresa_id'));
         $dados = [
             'formulario' => $formulario,
-            'perguntas' => $perguntas
+            'perguntas' => $perguntas,
+            'nome_empresa' => $empresa?->razao_social ?? '',
+            'nome_cliente' => $projeto?->cliente?->nome ?? '',
         ];
         return view('formularios.formulario', $dados);
     }
